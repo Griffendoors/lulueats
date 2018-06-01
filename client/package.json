@@ -5,7 +5,19 @@
   "dependencies": {
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "bootstrap": "4.1.1",
+    "font-awesome": "4.7.0",
+    "jquery": "3.3.1"
+  },
+  "devDependencies": {
+    "browser-sync": "2.24.3",
+    "gulp": "^3.9.1",
+    "gulp-clean-css": "3.9.4",
+    "gulp-header": "2.0.5",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "4.0.1",
+    "gulp-uglify": "3.0.0"
   },
   "scripts": {
     "start": "react-scripts start",
