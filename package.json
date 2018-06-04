@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "startDev": "nodemon ./bin/www",
-    "heroku-postbuild": "knex migrate latest && cd client && npm install && npm run build"
+    "heroku-postbuild": "knex migrate:latest && cd client && npm install && npm run build"
   },
   "dependencies": {
     "cookie-parser": "~1.4.3",
