@@ -53,7 +53,7 @@ class Contact extends Component {
                 <div className="col-lg-8 col-md-10 mx-auto">
                   <div className="page-heading">
                     <h1>Contact Me</h1>
-                    <span className="subheading">Have questions? I have answers.</span>
+                    <span className="subheading">Berry cool.</span>
                   </div>
                 </div>
               </div>
