@@ -4,10 +4,14 @@ import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
 
-class About extends Component {
+
+
+
+class Contact extends Component {
   render() {
     return (
       <div>
+
       <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
         <div className="container">
           <a className="navbar-brand" >Lulu Caitcheon</a>
@@ -37,32 +41,48 @@ class About extends Component {
         </div>
       </nav>
 
-          <header className="masthead" style={{"background-image": "url('img/bgAbout.jpg')"}}>
+          <header className="masthead" style={{"background-image": "url('img/bgContact.jpg')"}}>
             <div className="overlay"></div>
             <div className="container">
               <div className="row">
                 <div className="col-lg-8 col-md-10 mx-auto">
                   <div className="page-heading">
-                    <h1>About Me</h1>
-                    <span className="subheading">This is what I do.</span>
                   </div>
                 </div>
               </div>
             </div>
           </header>
 
+
           <div className="container">
             <div className="row">
               <div className="col-lg-8 col-md-10 mx-auto">
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Saepe nostrum ullam eveniet pariatur voluptates odit, fuga atque ea nobis sit soluta odio, adipisci quas excepturi maxime quae totam ducimus consectetur?</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eius praesentium recusandae illo eaque architecto error, repellendus iusto reprehenderit, doloribus, minus sunt. Numquam at quae voluptatum in officia voluptas voluptatibus, minus!</p>
-                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut consequuntur magnam, excepturi aliquid ex itaque esse est vero natus quae optio aperiam soluta voluptatibus corporis atque iste neque sit tempora!</p>
+                <form name="sentMessage" id="contactForm" noValidate>
+                  <div className="control-group">
+                    <div className="form-group floating-label-form-group controls">
+                      <label>Email Address</label>
+                      <input type="email" className="form-control" placeholder="Email Address" id="email" required data-validation-required-message="Please enter your email address."></input>
+                      <p className="help-block text-danger"></p>
+                    </div>
+                  </div>
+                  <div className="control-group">
+                    <div className="form-group col-xs-12 floating-label-form-group controls">
+                      <label>Password</label>
+                      <input type="tel" className="form-control" placeholder="Password" id="password" required data-validation-required-message="Please enter your password."></input>
+                      <p className="help-block text-danger"></p>
+                    </div>
+                  </div>
+                  <br></br>
+                  <div id="success"></div>
+                  <div className="form-group">
+                    <button type="submit" className="btn btn-primary" id="loginButton">Login</button>
+                  </div>
+                </form>
               </div>
             </div>
           </div>
 
           <hr></hr>
-
 
           <footer>
             <div className="container">
@@ -86,8 +106,9 @@ class About extends Component {
           </footer>
       </div>
 
+
     );
   }
 }
 
-export default About;
+export default Contact;

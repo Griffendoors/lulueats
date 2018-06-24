@@ -1,11 +1,86 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Link } from 'react-router-bootstrap';
+
+import PostPreview from'./PostPreview.js';
 
 class Home extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      numberOfPostsToPreview:1,
+      posts: [],
+      itsMe: true
+      
+    }
+  }
+
+  getPostByID = (postId) => {
+    var allPosts = this.state.posts
+    var thePost = null;
+
+    for (var i = 0; i < allPosts.length; i++) {
+      if (allPosts[i].id === postId) {
+          thePost =  allPosts[i];
+      }
+    }
+    return thePost;
+  }
+
+  componentDidMount(){
+    this.getPosts();
+  }
+
+  getPosts(){
+    fetch('/getPosts/all',{
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json"
+      },
+    })
+    .then(res => res.json())
+    .then(posts => this.setState({posts}))
+  }
+
+  showMorePosts = () => {
+    this.setState({numberOfPostsToPreview:3});
+  }
+
+  selectPostPreview = (postId) => {
+    var post = this.getPostByID(postId);
+
+
+  }
+
+  //TODO: WHEN RENDERING POST PREVIEWS - ONLY WANT TO GRAB AND RENDER THE FEW FIELDS, DONT WANT TO PULL EVERYTHING
+
+  renderPostPreviews(){
+    const posts = this.state.posts;
+    const subset = posts.slice(0,this.state.numberOfPostsToPreview);
+
+    const postComponents = subset.map((post) =>
+      <div>
+      <PostPreview  postId = {post.id}
+                    postTitle = {post.title}
+                    postSubtitle = {post.subTitle}
+                    postAuthor = {"Posted by " + post.author}
+                    isPrivate = {post.isPrivate}
+                    selectPostPreview ={this.selectPostPreview}
+      />
+      <hr></hr>
+      </div>
+    );
+    return postComponents;
+  }
+
   render() {
     return (
+
+
   <div>
+
   <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
     <div className="container">
       <a className="navbar-brand" >Lulu Caitcheon</a>
@@ -26,11 +101,6 @@ class Home extends Component {
             </LinkContainer>
           </li>
           <li className="nav-item">
-            <LinkContainer to="/posts">
-              <a className="nav-link">Posts</a>
-            </LinkContainer>
-          </li>
-          <li className="nav-item">
             <LinkContainer to="/contact">
               <a className="nav-link">Contact</a>
             </LinkContainer>
@@ -40,7 +110,7 @@ class Home extends Component {
     </div>
   </nav>
 
-  <header className="masthead" style={{"backgroundImage": "url('img/home-bg-2.jpeg')"}}>
+  <header className="masthead" style={{"backgroundImage": "url('img/bgHome.jpeg')"}}>
     <div className="overlay"></div>
     <div className="container">
       <div className="row">
@@ -57,62 +127,12 @@ class Home extends Component {
   <div className="container">
     <div className="row">
       <div className="col-lg-8 col-md-10 mx-auto">
-        <div className="post-preview">
-          <a href="post.html">
-            <h2 className="post-title">
-              Man must explore, and this is exploration at its greatest
-            </h2>
-            <h3 className="post-subtitle">
-              Problems look mighty small from 150 miles up
-            </h3>
-          </a>
-          <p className="post-meta">Posted by
-            <a href="#">Start Bootstrap</a>
-            on September 24, 2018</p>
-        </div>
-        <hr></hr>
-        <div className="post-preview">
-          <a href="post.html">
-            <h2 className="post-title">
-              "I believe every human has a finite number of heartbeats. I don't intend to waste any of mine."
-            </h2>
-          </a>
-          <p className="post-meta">Posted by
-            <a href="#">Start Bootstrap</a>
-            on September 18, 2018</p>
-        </div>
-        <hr></hr>
-        <div className="post-preview">
-          <a href="post.html">
-            <h2 className="post-title">
-              Science has not yet mastered prophecy
-            </h2>
-            <h3 className="post-subtitle">
-              We predict too much for the next year and yet far too little for the next ten.
-            </h3>
-          </a>
-          <p className="post-meta">Posted by
-            <a href="#">Start Bootstrap</a>
-            on August 24, 2018</p>
-        </div>
-        <hr></hr>
-        <div className="post-preview">
-          <a href="post.html">
-            <h2 className="post-title">
-              Failure is not an option
-            </h2>
-            <h3 className="post-subtitle">
-              Many say exploration is part of our destiny, but it’s actually our duty to future generations.
-            </h3>
-          </a>
-          <p className="post-meta">Posted by
-            <a href="#">Start Bootstrap</a>
-            on July 8, 2018</p>
-        </div>
-        <hr></hr>
+
+
+        {this.renderPostPreviews()}
 
         <div className="clearfix">
-          <a className="btn btn-primary float-right" href="#">Older Posts &rarr;</a>
+          <a className="btn btn-primary float-right" href = "javascript:;" onClick={this.showMorePosts} >Older Posts &rarr;</a>
         </div>
       </div>
     </div>
@@ -135,7 +155,7 @@ class Home extends Component {
               </a>
             </li>
           </ul>
-          <p className="copyright text-muted">Copyright &copy; Griff Web Apps 2018</p>
+          <p className="copyright text-muted">Copyright &copy; GWA 2018</p>
           <p className="copyright text-muted">Theme from Blackrock Digital</p>
         </div>
       </div>

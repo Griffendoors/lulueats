@@ -5,7 +5,13 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 
 
-class Posts extends Component {
+class Post extends Component {
+
+ constructor(props){
+   super(props)
+
+ }
+
   render() {
     return (
       <div>
@@ -29,11 +35,6 @@ class Posts extends Component {
                 </LinkContainer>
               </li>
               <li className="nav-item">
-                <LinkContainer to="/posts">
-                  <a className="nav-link">Posts</a>
-                </LinkContainer>
-              </li>
-              <li className="nav-item">
                 <LinkContainer to="/contact">
                   <a className="nav-link">Contact</a>
                 </LinkContainer>
@@ -43,7 +44,7 @@ class Posts extends Component {
         </div>
       </nav>
 
-          <header className="masthead" style={{"background-image": "url('img/post-bg.jpg')"}}>
+          <header className="masthead" style={{"background-image": "url('../img/bgPost1.jpg')"}}>
             <div className="overlay"></div>
             <div className="container">
               <div className="row">
@@ -65,6 +66,7 @@ class Posts extends Component {
             <div className="container">
               <div className="row">
                 <div className="col-lg-8 col-md-10 mx-auto">
+
                   <p>"Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory."</p>
 
                   <p>"Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science."</p>
@@ -90,7 +92,7 @@ class Posts extends Component {
                   <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
 
                   <a href="#">
-                    <img className="img-fluid" src="img/post-sample-image.jpg" alt=""></img>
+                    <img className="img-fluid" src="../img/bgPost1.jpg" alt=""></img>
                   </a>
                   <span className="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
 
@@ -135,4 +137,4 @@ class Posts extends Component {
   }
 }
 
-export default Posts;
+export default Post;

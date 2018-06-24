@@ -32,11 +32,6 @@ class Contact extends Component {
                 </LinkContainer>
               </li>
               <li className="nav-item">
-                <LinkContainer to="/posts">
-                  <a className="nav-link">Posts</a>
-                </LinkContainer>
-              </li>
-              <li className="nav-item">
                 <LinkContainer to="/contact">
                   <a className="nav-link">Contact</a>
                 </LinkContainer>
@@ -46,7 +41,7 @@ class Contact extends Component {
         </div>
       </nav>
 
-          <header className="masthead" style={{"background-image": "url('img/contact-bg.jpg')"}}>
+          <header className="masthead" style={{"background-image": "url('img/bgContact.jpg')"}}>
             <div className="overlay"></div>
             <div className="container">
               <div className="row">
@@ -65,7 +60,7 @@ class Contact extends Component {
             <div className="row">
               <div className="col-lg-8 col-md-10 mx-auto">
                 <p>Want to get in touch? Fill out the form below to send me a message and I will get back to you as soon as possible!</p>
-                <form name="sentMessage" id="contactForm" novalidate>
+                <form name="sentMessage" id="contactForm" noValidate>
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Name</label>
@@ -120,7 +115,7 @@ class Contact extends Component {
                       </a>
                     </li>
                   </ul>
-                  <p className="copyright text-muted">Copyright &copy; Griff Web Apps 2018</p>
+                  <p className="copyright text-muted">Copyright &copy; GWA 2018</p>
                   <p className="copyright text-muted">Theme from Blackrock Digital</p>
                 </div>
               </div>
