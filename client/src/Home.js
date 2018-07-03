@@ -11,9 +11,10 @@ class Home extends Component {
     super(props);
     this.state = {
       numberOfPostsToPreview:1,
+      extendedNumberOfPostsToPreview: 10,
       posts: [],
       itsMe: true
-      
+
     }
   }
 
@@ -34,7 +35,7 @@ class Home extends Component {
   }
 
   getPosts(){
-    fetch('/getPosts/all',{
+    fetch('/posts/allPreviews',{
       method: "GET",
       headers: {
         "Content-Type": "application/json"
@@ -45,7 +46,8 @@ class Home extends Component {
   }
 
   showMorePosts = () => {
-    this.setState({numberOfPostsToPreview:3});
+    var extendedNumberOfPostsToPreview = this.state.extendedNumberOfPostsToPreview;
+    this.setState({numberOfPostsToPreview:extendedNumberOfPostsToPreview});
   }
 
   selectPostPreview = (postId) => {
@@ -54,7 +56,6 @@ class Home extends Component {
 
   }
 
-  //TODO: WHEN RENDERING POST PREVIEWS - ONLY WANT TO GRAB AND RENDER THE FEW FIELDS, DONT WANT TO PULL EVERYTHING
 
   renderPostPreviews(){
     const posts = this.state.posts;
@@ -75,40 +76,87 @@ class Home extends Component {
     return postComponents;
   }
 
+  renderNav(){
+    if(this.state.itsMe){
+      return(
+        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+          <div className="container">
+            <a className="navbar-brand" >Lulu Caitcheon</a>
+            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+              Menu
+              <i className="fa fa-bars"></i>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarResponsive">
+              <ul className="navbar-nav ml-auto">
+                <li className="nav-item">
+                <LinkContainer to="/">
+                  <a className="nav-link">Home</a>
+                </LinkContainer>
+                </li>
+                <li className="nav-item">
+                  <LinkContainer to="/about">
+                    <a className="nav-link">About</a>
+                  </LinkContainer>
+                </li>
+                <li className="nav-item">
+                  <LinkContainer to="/contact">
+                    <a className="nav-link">Contact</a>
+                  </LinkContainer>
+                </li>
+                <li className="nav-item">
+                  <LinkContainer to="/create">
+                    <a className="nav-link">Create</a>
+                  </LinkContainer>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      );
+    }
+    else{
+      return(
+        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+          <div className="container">
+            <a className="navbar-brand" >Lulu Caitcheon</a>
+            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+              Menu
+              <i className="fa fa-bars"></i>
+            </button>
+            <div className="collapse navbar-collapse" id="navbarResponsive">
+              <ul className="navbar-nav ml-auto">
+                <li className="nav-item">
+                <LinkContainer to="/">
+                  <a className="nav-link">Home</a>
+                </LinkContainer>
+                </li>
+                <li className="nav-item">
+                  <LinkContainer to="/about">
+                    <a className="nav-link">About</a>
+                  </LinkContainer>
+                </li>
+                <li className="nav-item">
+                  <LinkContainer to="/contact">
+                    <a className="nav-link">Contact</a>
+                  </LinkContainer>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      );
+    }
+  }
+
   render() {
     return (
 
 
   <div>
 
-  <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-    <div className="container">
-      <a className="navbar-brand" >Lulu Caitcheon</a>
-      <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-        Menu
-        <i className="fa fa-bars"></i>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarResponsive">
-        <ul className="navbar-nav ml-auto">
-          <li className="nav-item">
-          <LinkContainer to="/">
-            <a className="nav-link">Home</a>
-          </LinkContainer>
-          </li>
-          <li className="nav-item">
-            <LinkContainer to="/about">
-              <a className="nav-link">About</a>
-            </LinkContainer>
-          </li>
-          <li className="nav-item">
-            <LinkContainer to="/contact">
-              <a className="nav-link">Contact</a>
-            </LinkContainer>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+    {this.renderNav()}
+
+
 
   <header className="masthead" style={{"backgroundImage": "url('img/bgHome.jpeg')"}}>
     <div className="overlay"></div>

@@ -9,40 +9,173 @@ class Post extends Component {
 
  constructor(props){
    super(props)
+   this.state = {
+     loading: true,
+     itsMe: true,
+     postObject: {
+       id: 99,
+       title: "This is the title of a post",
+       subtitle: "This is the subtitle of a post",
+       author: "Ryan Griffin",
+       date: "Today and now",
+       body: "BLEP BLEP BLEP OBE TWO THREE HELL OTHERE RG"
+     }
+
+   }
+ }
+
+ editButtonPressed = () => {
 
  }
 
-  render() {
-    return (
-      <div>
-      <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-        <div className="container">
-          <a className="navbar-brand" >Lulu Caitcheon</a>
-          <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-            Menu
-            <i className="fa fa-bars"></i>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarResponsive">
-            <ul className="navbar-nav ml-auto">
-              <li className="nav-item">
-              <LinkContainer to="/">
-                <a className="nav-link">Home</a>
-              </LinkContainer>
-              </li>
-              <li className="nav-item">
-                <LinkContainer to="/about">
-                  <a className="nav-link">About</a>
-                </LinkContainer>
-              </li>
-              <li className="nav-item">
-                <LinkContainer to="/contact">
-                  <a className="nav-link">Contact</a>
-                </LinkContainer>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+ deleteButtonPressed = () => {
+
+ }
+
+ componentWillMount = () => {
+   var postId = 7;//this.props.postId;
+
+
+ }
+
+ componentDidMount = () => {
+   this.setState({loading: false});
+ }
+
+ renderControls(){
+   if(this.state.itsMe){
+     return(
+       <div className="container">
+         <div className="row">
+           <div className="col-lg-8 col-md-10 mx-auto">
+             <div className="clearfix">
+                            <LinkContainer to="/edit">
+               <a className="btn btn-warning float-right" href = "javascript:;" /*onClick={this.showMorePosts}*/ >  Edit Post &rarr;</a>
+                            </LinkContainer>
+             </div>
+             <hr></hr>
+             <div className="clearfix">
+               <a className="btn btn-danger float-right" href = "javascript:;"  data-toggle="modal" data-target="#exampleModalCenter">Delete Post &rarr;</a>
+             </div>
+         </div>
+       </div>
+     </div>
+     );
+   }
+   else{
+     return(
+       <div></div>
+     );
+   }
+ }
+
+ renderNav(){
+   if(this.state.itsMe){
+     return(
+       <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+         <div className="container">
+           <a className="navbar-brand" >Lulu Caitcheon</a>
+           <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+             Menu
+             <i className="fa fa-bars"></i>
+           </button>
+           <div className="collapse navbar-collapse" id="navbarResponsive">
+             <ul className="navbar-nav ml-auto">
+               <li className="nav-item">
+               <LinkContainer to="/">
+                 <a className="nav-link">Home</a>
+               </LinkContainer>
+               </li>
+               <li className="nav-item">
+                 <LinkContainer to="/about">
+                   <a className="nav-link">About</a>
+                 </LinkContainer>
+               </li>
+               <li className="nav-item">
+                 <LinkContainer to="/contact">
+                   <a className="nav-link">Contact</a>
+                 </LinkContainer>
+               </li>
+               <li className="nav-item">
+                 <LinkContainer to="/create">
+                   <a className="nav-link">Create</a>
+                 </LinkContainer>
+               </li>
+             </ul>
+           </div>
+         </div>
+       </nav>
+     );
+   }
+   else{
+     return(
+       <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+         <div className="container">
+           <a className="navbar-brand" >Lulu Caitcheon</a>
+           <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+             Menu
+             <i className="fa fa-bars"></i>
+           </button>
+           <div className="collapse navbar-collapse" id="navbarResponsive">
+             <ul className="navbar-nav ml-auto">
+               <li className="nav-item">
+               <LinkContainer to="/">
+                 <a className="nav-link">Home</a>
+               </LinkContainer>
+               </li>
+               <li className="nav-item">
+                 <LinkContainer to="/about">
+                   <a className="nav-link">About</a>
+                 </LinkContainer>
+               </li>
+               <li className="nav-item">
+                 <LinkContainer to="/contact">
+                   <a className="nav-link">Contact</a>
+                 </LinkContainer>
+               </li>
+             </ul>
+           </div>
+         </div>
+       </nav>
+     );
+   }
+ }
+
+ render() {
+   if(this.state.loading){
+     return(
+       <h1>Loading Lala</h1>
+     );
+   }
+   else{
+
+
+   return (
+
+
+ <div>
+
+ <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+   <div class="modal-dialog modal-dialog-centered" role="document">
+     <div class="modal-content">
+       <div class="modal-header">
+         <h5 class="modal-title" id="exampleModalLongTitle">Are you sure you want to delete this post?</h5>
+         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>
+       </div>
+       <div class="modal-body">
+
+       </div>
+       <div class="modal-footer">
+         <button type="button" class="btn btn-secondary" data-dismiss="modal">delete</button>
+         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+       </div>
+     </div>
+   </div>
+ </div>
+
+   {this.renderNav()}
 
           <header className="masthead" style={{"background-image": "url('../img/bgPost1.jpg')"}}>
             <div className="overlay"></div>
@@ -50,11 +183,9 @@ class Post extends Component {
               <div className="row">
                 <div className="col-lg-8 col-md-10 mx-auto">
                   <div className="post-heading">
-                    <h1>Man must explore, and this is exploration at its greatest</h1>
-                    <h2 className="subheading">Problems look mighty small from 150 miles up</h2>
-                    <span className="meta">Posted by
-                      <a href="#">Start Bootstrap</a>
-                      on August 24, 2018</span>
+                    <h1>{this.state.postObject.title}</h1>
+                    <h2 className="subheading">{this.state.postObject.subTitle}</h2>
+                    <span className="meta">Posted by {this.state.postObject.author} on {this.state.postObject.date} </span>
                   </div>
                 </div>
               </div>
@@ -67,48 +198,17 @@ class Post extends Component {
               <div className="row">
                 <div className="col-lg-8 col-md-10 mx-auto">
 
-                  <p>"Never in all their history have men been able truly to conceive of the world as one: a single sphere, a globe, having the qualities of a globe, a round earth in which all the directions eventually meet, in which there is no center because every point, or none, is center — an equal earth which all men occupy as equals. The airman's earth, if free men make it, will be truly round: a globe in practice, not in theory."</p>
+                  <p>{this.state.postObject.body}</p>
 
-                  <p>"Science cuts two ways, of course; its products can be used for both good and evil. But there's no turning back from science. The early warnings about technological dangers also come from science."</p>
-
-                  <p>What was most significant about the lunar voyage was not that man set foot on the Moon but that they set eye on the earth.</p>
-
-                  <p>"A Chinese tale tells of some men sent to harm a young girl who, upon seeing her beauty, become her protectors rather than her violators. That's how I felt seeing the Earth for the first time. I could not help but love and cherish her."</p>
-
-                  <p>"For those who have seen the Earth from space, and for the hundreds and perhaps thousands more who will, the experience most certainly changes your perspective. The things that we share in our world are far more valuable than those which divide us."</p>
-
-                  <h2 className="section-heading">The Final Frontier</h2>
-
-                  <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-
-                  <p>There can be no thought of finishing for ‘aiming for the stars.’ Both figuratively and literally, it is a task to occupy the generations. And no matter how much progress one makes, there is always the thrill of just beginning.</p>
-
-                  <blockquote className="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote>
-
-                  <p>Spaceflights cannot be stopped. This is not the work of any one man or even a group of men. It is a historical process which mankind is carrying out in accordance with the natural laws of human development.</p>
-
-                  <h2 className="section-heading">Reaching for the Stars</h2>
-
-                  <p>As we got further and further away, it [the Earth] diminished in size. Finally it shrank to the size of a marble, the most beautiful you can imagine. That beautiful, warm, living object looked so fragile, so delicate, that if you touched it with a finger it would crumble and fall apart. Seeing this has to change a man.</p>
-
-                  <a href="#">
-                    <img className="img-fluid" src="../img/bgPost1.jpg" alt=""></img>
-                  </a>
-                  <span className="caption text-muted">To go places and do things that have never been done before – that’s what living is all about.</span>
-
-                  <p>Space, the final frontier. These are the voyages of the Starship Enterprise. Its five-year mission: to explore strange new worlds, to seek out new life and new civilizations, to boldly go where no man has gone before.</p>
-
-                  <p>As I stand out here in the wonders of the unknown at Hadley, I sort of realize there’s a fundamental truth to our nature, Man must explore, and this is exploration at its greatest.</p>
-
-                  <p>Placeholder text by
-                    <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by
-                    <a href="https://www.flickr.com/photos/nasacommons/">NASA on The Commons</a>.</p>
                 </div>
               </div>
             </div>
           </article>
 
+                 {this.renderControls()}
+
           <hr></hr>
+
 
 
           <footer>
@@ -134,6 +234,7 @@ class Post extends Component {
 
       </div>
     );
+  }
   }
 }
 
