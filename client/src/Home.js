@@ -18,12 +18,14 @@ class Home extends Component {
     }
   }
 
-  getPostByID = (postId) => {
+  // TODO: THIS IS BAD, DO NOT WANT TO STORE EVERY POST IN THE APP. ONLY WANT TO GET SEVERAL PREVIEWS AT A TIME
+
+  getPostByID = (id) => {
     var allPosts = this.state.posts
     var thePost = null;
 
     for (var i = 0; i < allPosts.length; i++) {
-      if (allPosts[i].id === postId) {
+      if (allPosts[i].id === id) {
           thePost =  allPosts[i];
       }
     }
@@ -50,8 +52,8 @@ class Home extends Component {
     this.setState({numberOfPostsToPreview:extendedNumberOfPostsToPreview});
   }
 
-  selectPostPreview = (postId) => {
-    var post = this.getPostByID(postId);
+  selectPostPreview = (id) => {
+    var post = this.getPostByID(id);
 
 
   }
@@ -62,11 +64,13 @@ class Home extends Component {
     const subset = posts.slice(0,this.state.numberOfPostsToPreview);
 
     const postComponents = subset.map((post) =>
+
+
       <div>
-      <PostPreview  postId = {post.id}
-                    postTitle = {post.title}
-                    postSubtitle = {post.subTitle}
-                    postAuthor = {"Posted by " + post.author}
+      <PostPreview  id = {post.id}
+                    title = {post.title}
+                    subTitle = {post.subTitle}
+                    author = {"Posted by " + post.author}
                     isPrivate = {post.isPrivate}
                     selectPostPreview ={this.selectPostPreview}
       />

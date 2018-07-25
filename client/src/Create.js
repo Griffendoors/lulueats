@@ -13,9 +13,9 @@ class Contact extends Component {
     super(props)
     this.state = {
       title: null,
-      subtitle: null,
+      subtTitle: null,
       author: null,
-      body: null
+      body: null,
 
     }
   }
@@ -26,7 +26,7 @@ class Contact extends Component {
     this.setState({title: e.target.value});
   }
   handleSubTitleChange = (e) => {
-    this.setState({subtitle: e.target.value});
+    this.setState({subTitle: e.target.value});
   }
   handleAuthorChange = (e) => {
     this.setState({author: e.target.value});
@@ -40,10 +40,11 @@ class Contact extends Component {
 
     var postObject = {
       title: this.state.title,
-      subtitle: this.state.subtitle,
+      subTitle: this.state.subTitle,
       author: this.state.author,
       body: this.state.body,
     };
+
 
     fetch('/posts/create',{
       method: "POST",
@@ -54,9 +55,18 @@ class Contact extends Component {
       },
       body: JSON.stringify(postObject),
     })
-    .then(res => res.json())
-    .then(posts => this.setState({posts}))
+
     //TODO: CHECK POST SUCCESFULLY CREATED. DONT LOSE POST IF NOT SAVED! GIVE USER OPP TO CTRL C
+
+    // TODO : FUCKED UP REFERSH / URL ENTER / REACT ROUTER CAUGHT BE EXPERSS THING?
+
+    // TODO : CLICK POSt PREVIEW; GRAB THE DATA BASED ON THAT ID;
+
+    //TODO : Redirect on post creation
+
+    // TODO: ERROR ON BAD POST CREATION
+
+    // TODO: Lock down client and server
   }
 
 
@@ -85,7 +95,7 @@ class Contact extends Component {
                   </div>
                   <div className="control-group">
                     <div className="form-group col-xs-12 floating-label-form-group controls">
-                      <label>Subtitle</label>
+                      <label>SubTitle</label>
                       <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>

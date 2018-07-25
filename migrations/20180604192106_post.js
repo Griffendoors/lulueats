@@ -3,7 +3,7 @@ exports.up = function(knex, Promise) {
   return knex.schema.createTable('post',(table) => {
     table.increments();
     table.text('title').notNullable();
-    table.title('author').notNullable();
+    table.text('author').notNullable();
     table.boolean('private').defaultTo(true).notNullable();
     table.datetime('date').notNullable();
   });

@@ -48,11 +48,11 @@ class App extends Component {
       <div className="App">
         <Route path="/" exact component={Home}/>
         <Route path="/about" component={About}/>
-        <Route path="/post/:postId" component={Post}/>
+        <Route path="/post/:id" component={Post}/>
         <Route path="/contact" component={Contact}/>
         <Route path="/login" component={Login}/>
         <Route path="/create" component={Create}/>
-        <Route path="/edit" component={Edit}/>
+        <Route path="/edit/:id" component={Edit}/>
 
       </div>
     );

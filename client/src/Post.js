@@ -12,34 +12,47 @@ class Post extends Component {
    this.state = {
      loading: true,
      itsMe: true,
-     postObject: {
-       id: 99,
-       title: "This is the title of a post",
-       subtitle: "This is the subtitle of a post",
-       author: "Ryan Griffin",
-       date: "Today and now",
-       body: "BLEP BLEP BLEP OBE TWO THREE HELL OTHERE RG"
-     }
+     postObject: {}
 
    }
  }
 
- editButtonPressed = () => {
-
- }
-
- deleteButtonPressed = () => {
-
- }
-
- componentWillMount = () => {
-   var postId = 7;//this.props.postId;
-
-
- }
 
  componentDidMount = () => {
-   this.setState({loading: false});
+   var id = this.props.match.params.id;
+
+   fetch('/posts/'+id,{
+     method: "GET",
+     headers: {
+       "Content-Type": "application/json"
+     },
+   })
+   .then(res => res.json())
+   .then(postObject => this.setState({postObject}))
+   .then(() => {
+     this.setState({loading: false});
+   })
+
+   // TODO: VALIDATE EVERYWHERE
+   // TODO: EDit post - dont do another server call, just pass info from here.
+   // TODO: Server and client, refavtor and abstract. DRY.
+ }
+
+ reallyDeletePost = () => {
+   var id = this.props.match.params.id;
+
+   fetch('/posts/'+id,{
+     method: "DELETE",
+     headers: {
+       "Content-Type": "application/json"
+     },
+   })
+   .then(res => {console.log(res)})
+   .then(() => {
+      this.props.history.push('/')
+    }).catch((error) => {
+      console.log(error)
+    })
  }
 
  renderControls(){
@@ -49,9 +62,9 @@ class Post extends Component {
          <div className="row">
            <div className="col-lg-8 col-md-10 mx-auto">
              <div className="clearfix">
-                            <LinkContainer to="/edit">
-               <a className="btn btn-warning float-right" href = "javascript:;" /*onClick={this.showMorePosts}*/ >  Edit Post &rarr;</a>
-                            </LinkContainer>
+               <LinkContainer to={"/edit/"+this.state.postObject.id}>
+                 <a className="btn btn-warning float-right" href = "javascript:;" >  Edit Post &rarr;</a>
+               </LinkContainer>
              </div>
              <hr></hr>
              <div className="clearfix">
@@ -144,38 +157,30 @@ class Post extends Component {
  render() {
    if(this.state.loading){
      return(
-       <h1>Loading Lala</h1>
+       <h1>Loading Post</h1>
      );
    }
    else{
+     return (
+       <div>
+         <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+           <div class="modal-dialog modal-dialog-centered" role="document">
+             <div class="modal-content">
+               <div class="modal-header">
+                 <h5 class="modal-title" id="exampleModalLongTitle">Are you sure you want to delete this post?</h5>
+                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                   <span aria-hidden="true">&times;</span>
+                 </button>
+               </div>
+               <div class="modal-footer">
+                 <button onClick={this.reallyDeletePost} type="button" class="btn btn-secondary" data-dismiss="modal">delete</button>
+                 <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+               </div>
+             </div>
+           </div>
+         </div>
 
-
-   return (
-
-
- <div>
-
- <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-   <div class="modal-dialog modal-dialog-centered" role="document">
-     <div class="modal-content">
-       <div class="modal-header">
-         <h5 class="modal-title" id="exampleModalLongTitle">Are you sure you want to delete this post?</h5>
-         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-           <span aria-hidden="true">&times;</span>
-         </button>
-       </div>
-       <div class="modal-body">
-
-       </div>
-       <div class="modal-footer">
-         <button type="button" class="btn btn-secondary" data-dismiss="modal">delete</button>
-         <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
-       </div>
-     </div>
-   </div>
- </div>
-
-   {this.renderNav()}
+        {this.renderNav()}
 
           <header className="masthead" style={{"background-image": "url('../img/bgPost1.jpg')"}}>
             <div className="overlay"></div>
