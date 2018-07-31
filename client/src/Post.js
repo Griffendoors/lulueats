@@ -27,11 +27,23 @@ class Post extends Component {
        "Content-Type": "application/json"
      },
    })
-   .then(res => res.json())
-   .then(postObject => this.setState({postObject}))
-   .then(() => {
-     this.setState({loading: false});
-   })
+   .then(r =>  r.json().then(data => ({res: r, body: data})))
+   .then(obj => {
+     if(!obj.res.ok){
+       alert("Something went wrong!");
+       throw Error(obj.res.statusText);
+     }
+     else{
+       var postObject = obj.body;
+       this.setState({postObject:postObject});
+     }
+
+   }).then(() => {
+       this.setState({loading: false});
+     })
+     .catch(function(error) {
+        console.log(error);
+   });
 
    // TODO: VALIDATE EVERYWHERE
    // TODO: EDit post - dont do another server call, just pass info from here.
@@ -47,13 +59,25 @@ class Post extends Component {
        "Content-Type": "application/json"
      },
    })
-   .then(res => {console.log(res)})
-   .then(() => {
-      this.props.history.push('/')
-    }).catch((error) => {
-      console.log(error)
-    })
+    .then(r =>  r.json().then(data => ({res: r, body: data})))
+    .then(obj => {
+      if(!obj.res.ok){
+        alert("Something went wrong!");
+        throw Error(obj.res.statusText);
+      }
+      else{
+        this.props.history.push('/')
+      }
+
+    }).then(() => {
+        this.setState({loading: false});
+      })
+      .catch(function(error) {
+         console.log(error);
+    });
+
  }
+
 
  renderControls(){
    if(this.state.itsMe){
@@ -157,7 +181,7 @@ class Post extends Component {
  render() {
    if(this.state.loading){
      return(
-       <h1>Loading Post</h1>
+       <h1>Post Not Found</h1>
      );
    }
    else{

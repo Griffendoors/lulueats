@@ -54,20 +54,38 @@ class Contact extends Component {
 
       },
       body: JSON.stringify(postObject),
-    })
+    }).then(r =>  r.json().then(data => ({res: r, body: data})))
+      .then(obj => {
+        if(!obj.res.ok){
+          alert("Something went wrong!");
+          throw Error(obj.res.statusText);
+        }
+        else{
+          this.props.history.push('/post/'+obj.body.id);
+        }
 
-    //TODO: CHECK POST SUCCESFULLY CREATED. DONT LOSE POST IF NOT SAVED! GIVE USER OPP TO CTRL C
+      }).catch(function(error) {
+          console.log(error);
+      });
+
+
+  }
+
 
     // TODO : FUCKED UP REFERSH / URL ENTER / REACT ROUTER CAUGHT BE EXPERSS THING?
 
     // TODO : CLICK POSt PREVIEW; GRAB THE DATA BASED ON THAT ID;
 
-    //TODO : Redirect on post creation
-
     // TODO: ERROR ON BAD POST CREATION
 
     // TODO: Lock down client and server
-  }
+
+    // TODO: DONT ALLOW BLANK FILEDS ?
+
+    // TODO: VALIDATE EVERYWHERE
+
+    // TODO: OK OR ERROR - CHECK EVERYWHERE - SERVER TOO - DIFFERENT ACTIONS DIFFERENT STATUSES - IF RESPONSE IS BAD, STAY HERE
+
 
 
   render() {
@@ -103,7 +121,7 @@ class Contact extends Component {
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Body</label>
-                      <textarea rows="50" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
+                      <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>

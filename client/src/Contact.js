@@ -12,7 +12,6 @@ class Contact extends Component {
   constructor(props){
     super(props);
     this.state = {
-      numberOfPostsToPreview:1,
       posts: [],
       itsMe: true
 

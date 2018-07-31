@@ -10,26 +10,12 @@ class Home extends Component {
   constructor(props){
     super(props);
     this.state = {
-      numberOfPostsToPreview:1,
-      extendedNumberOfPostsToPreview: 10,
+      numberOfPostsToPreview:3,
+      extendedNumberOfPostsToPreview: 99,
       posts: [],
       itsMe: true
 
     }
-  }
-
-  // TODO: THIS IS BAD, DO NOT WANT TO STORE EVERY POST IN THE APP. ONLY WANT TO GET SEVERAL PREVIEWS AT A TIME
-
-  getPostByID = (id) => {
-    var allPosts = this.state.posts
-    var thePost = null;
-
-    for (var i = 0; i < allPosts.length; i++) {
-      if (allPosts[i].id === id) {
-          thePost =  allPosts[i];
-      }
-    }
-    return thePost;
   }
 
   componentDidMount(){
@@ -43,9 +29,27 @@ class Home extends Component {
         "Content-Type": "application/json"
       },
     })
-    .then(res => res.json())
-    .then(posts => this.setState({posts}))
+    .then(r =>  r.json().then(data => ({res: r, body: data})))
+    .then(obj => {
+      if(!obj.res.ok){
+        alert("Something went wrong!");
+        throw Error(obj.res.statusText);
+      }
+      else{
+        var posts = obj.body;
+        this.setState({posts:posts});
+      }
+
+    }).catch(function(error) {
+        console.log(error);
+    });
+
+
   }
+
+
+
+
 
   showMorePosts = () => {
     var extendedNumberOfPostsToPreview = this.state.extendedNumberOfPostsToPreview;
@@ -153,6 +157,7 @@ class Home extends Component {
   }
 
   render() {
+    console.dir(this.props);
     return (
 
 

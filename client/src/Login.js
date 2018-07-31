@@ -8,6 +8,67 @@ import { LinkContainer } from 'react-router-bootstrap';
 
 
 class Contact extends Component {
+
+  constructor(props){
+    super(props)
+    this.state = {
+      email: null,
+      password: null
+
+    }
+  }
+  handleEmailChange = (e) => {
+    this.setState({email: e.target.value});
+  }
+  handlePasswordChange = (e) => {
+    this.setState({password: e.target.value});
+  }
+
+  loginClicked = () => {
+
+    var credentialsObject = {
+      email: this.state.email,
+      password: this.state.password,
+    };
+
+
+    fetch('/authentication/login',{
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+
+      },
+      body: JSON.stringify(credentialsObject),
+    }).then(r =>  r.json().then(data => ({res: r, body: data})))
+      .then(obj => {
+        if(!obj.res.ok){
+          if(obj.res.status === 400){
+            alert("Incorrect email or password");
+          }
+          else{
+            alert("Something went wrong!");
+            throw Error(obj.res.statusText);
+          }
+        }
+        else{
+          //this.props.history.push('/post/'+obj.body.id);
+          this.props.setToken(obj.body.token)
+          //this.props.history.push('/');
+          console.dir(this.props);
+          //console.dir(obj);
+
+        }
+
+      }).catch(function(error) {
+          console.log(error);
+      });
+
+
+  }
+
+
+
   render() {
     return (
       <div>
@@ -61,21 +122,21 @@ class Contact extends Component {
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Email Address</label>
-                      <input type="email" className="form-control" placeholder="Email Address" id="email" required data-validation-required-message="Please enter your email address."></input>
+                      <input type="email" className="form-control" placeholder="Email Address" id="email" required data-validation-required-message="Please enter your email address." value={this.state.email} onChange={this.handleEmailChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group col-xs-12 floating-label-form-group controls">
                       <label>Password</label>
-                      <input type="tel" className="form-control" placeholder="Password" id="password" required data-validation-required-message="Please enter your password."></input>
+                      <input type="tel" className="form-control" placeholder="Password" id="password" required data-validation-required-message="Please enter your password." value={this.state.password} onChange={this.handlePasswordChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <br></br>
                   <div id="success"></div>
                   <div className="form-group">
-                    <button type="submit" className="btn btn-primary" id="loginButton">Login</button>
+                    <button type = "button" className="btn btn-primary" onClick={this.loginClicked}>Login</button>
                   </div>
                 </form>
               </div>

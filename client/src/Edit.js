@@ -55,9 +55,26 @@ class Edit extends Component {
 
       },
       body: JSON.stringify(this.state.postObject),
+    }).then(r =>  r.json().then(data => ({res: r, body: data})))
+      .then(obj => {
+        if(!obj.res.ok){
+          alert("Something went wrong!");
+          throw Error(obj.res.statusText);
+        }
+        else{
+          this.props.history.push('/post/'+obj.body.id);
+        }
 
-    })
+      }).catch(function(error) {
+          console.log(error);
+      });
+
+
+
+
   }
+
+
 
   componentDidMount = () => {
 
@@ -69,19 +86,24 @@ class Edit extends Component {
         "Content-Type": "application/json"
       },
     })
-    .then(res => res.json())
-    .then(postObject => this.setState({postObject: postObject}))
-    .then(() => {
-      this.setState({loading: false});
-    })
+    .then(r =>  r.json().then(data => ({res: r, body: data})))
+    .then(obj => {
+      if(!obj.res.ok){
+        alert("Something went wrong!");
+        throw Error(obj.res.statusText);
+      }
+      else{
+        var postObject = obj.body;
+        this.setState({postObject:postObject});
+      }
 
-    // TODO: VALIDATE EVERYWHERE
-    // TODO: NEED THIS TEXT AREA TO GROW WHEN 90% FULL*/
-    // TODO: TIDY UP FORMS
-    // TODO: FIELD NAMES SAME EVERYWHERE
-    // TODO: Redirects after, create, edit, delete
-    // TODO: GET RID OF POST OBJECT
-    //
+    }).then(() => {
+        this.setState({loading: false});
+      })
+      .catch(function(error) {
+         console.log(error);
+    });
+
   }
 
 
@@ -118,7 +140,7 @@ class Edit extends Component {
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Body</label>
-                      <textarea rows="10" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.postObject.body} onChange={this.handleBodyChange}></textarea>
+                      <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.postObject.body} onChange={this.handleBodyChange}></textarea>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>

@@ -16,9 +16,8 @@ class PostPreview extends Component {
 
   render() {
     return (
-      //<LinkContainer to={{pathname: "/post/" + this.props.id}}>
       <LinkContainer to={"/post/"+this.props.id}>
-      <div className="post-preview" /*onClick = {() => this.onClick(this.props.id)}*/>
+      <div className="post-preview">
         <a href="javascript:;">
           <h2 className="post-title">
             {this.props.title}

@@ -19,14 +19,16 @@ class App extends Component {
   constructor(props){
     super(props);
     this.state = {
-      loginObject: {
-        status: true,
         token: null
-      }
-
     }
   }
 
+  setToken = (token) => {
+    this.setState({token:token});
+  }
+
+
+/*
   attemptLogin = (emailAddress,password) => {
     fetch('/authetication/login',{
       method: "POST",
@@ -39,18 +41,57 @@ class App extends Component {
       }
     })
     .then(res => res.json())
-    .then(loginObject => this.setState({loginObject}))
-  }
+    .then(token => this.setState({token}))
 
+
+    .then(r =>  r.json().then(data => ({res: r, body: data})))
+    .then(obj => {
+      if(!obj.res.ok){
+        alert("Something went wrong!");
+        throw Error(obj.res.statusText);
+      }
+      else{
+        var postObject = obj.body;
+        this.setState({postObject:postObject});
+                  this.props.history.push('/post/'+obj.body.id);
+      }
+
+    }).then(() => {
+        this.setState({loading: false});
+      })
+      .catch(function(error) {
+         console.log(error);
+    });
+
+  }
+*/
 
   render() {
+
+    const myLoginObject = (props) => {
+        return (
+          <Login
+            setToken={this.setToken.bind(this)}
+          />
+        );
+    }
+
+    const myHomeObject = (props) => {
+        return (
+          <Home
+            token={this.state.token}
+          />
+        );
+    }
+
+
     return (
       <div className="App">
-        <Route path="/" exact component={Home}/>
+        <Route path="/" exact render = {myHomeObject}/>
         <Route path="/about" component={About}/>
         <Route path="/post/:id" component={Post}/>
         <Route path="/contact" component={Contact}/>
-        <Route path="/login" component={Login}/>
+        <Route path="/login" render={myLoginObject}/>
         <Route path="/create" component={Create}/>
         <Route path="/edit/:id" component={Edit}/>
 
