@@ -13,14 +13,48 @@ class Home extends Component {
       numberOfPostsToPreview:3,
       extendedNumberOfPostsToPreview: 99,
       posts: [],
-      itsMe: true
-
+      authorized: false
     }
+
   }
 
   componentDidMount(){
+    this.authorize();
     this.getPosts();
   }
+
+  authorize = () => {
+    //localStorage.setItem('user', JSON.stringify(user));
+    let token = localStorage.getItem('token');
+    this.checkTokenIsGood(token);
+  }
+
+
+  checkTokenIsGood = (token) => {
+    fetch('/authentication/checkToken',{
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+
+      },
+      body: JSON.stringify(this.token),
+    }).then(r =>  r.json().then(data => ({res: r, body: data})))
+      .then(obj => {
+      if(!obj.res.ok){
+        alert("Something went wrong!");
+        throw Error(obj.res.statusText);
+      }
+      else{
+        this.setState({authorized:true});
+      }
+
+    }).catch(function(error) {
+        console.log(error);
+    });
+  }
+
+
 
   getPosts(){
     fetch('/posts/allPreviews',{
@@ -84,12 +118,16 @@ class Home extends Component {
     return postComponents;
   }
 
+
   renderNav(){
-    if(this.state.itsMe){
+
+    var authorized = this.state.authorized;
+
+    if(authorized){
       return(
         <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
           <div className="container">
-            <a className="navbar-brand" >Lulu Caitcheon</a>
+            <a className="navbar-brand"  >Lulu Caitcheon</a>
             <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
               Menu
               <i className="fa fa-bars"></i>
@@ -157,10 +195,7 @@ class Home extends Component {
   }
 
   render() {
-    console.dir(this.props);
     return (
-
-
   <div>
 
     {this.renderNav()}
@@ -222,6 +257,7 @@ class Home extends Component {
 
       );
     }
+
   }
 
   export default Home;

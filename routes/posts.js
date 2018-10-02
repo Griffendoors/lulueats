@@ -9,7 +9,11 @@ router.get('/allPreviews', function(req, res, next) {
   .select('id','title', 'subTitle', 'author')
   .orderBy('id', 'asc')
   .then(posts => {
-    res.json(posts)
+    res.status(200);
+    res.json(posts);
+  }).catch(function(error) {
+      res.status(500);
+      res.json({});
   });
 });
 
@@ -21,15 +25,17 @@ router.get('/:id', function(req, res, next) {
     .where('id', id)
     .first()
     .then(post => {
-      res.json(post)
+      res.status(200);
+      res.json(post);
+    }).catch(function(error) {
+        res.status(500);
+        res.json({});
     });
   }
   else{
     res.status(500);
-    next('error');
-    // TODO: Error page? ie message saying invalid id.
-    // TODO: can put post/id in url and will pull up post
-    // TODO: sanity check post api
+    res.json({});
+
   }
 
 });
@@ -38,7 +44,6 @@ router.get('/:id', function(req, res, next) {
 
 function insertOrUpdate(req,res,callback){
     if(validPost(req.body)){
-
         var postObject = req.body;
         var title = postObject.title;
         var subTitle = postObject.subTitle;
@@ -53,12 +58,11 @@ function insertOrUpdate(req,res,callback){
           body: body,
           private: false,
         };
-
         callback(post);
     }
     else{
       res.status(500);
-      next('error');
+      res.json({});
     }
 }
 
@@ -77,10 +81,14 @@ router.post('/create', function(req,res,next){
       .insert(post, 'id')
       .then(ids => {
          const id = ids[0];
-         res.redirect('*');
+         res.status(200);
+         res.json({id:id});
+
+      }).catch(function(error) {
+          res.status(500);
+          res.json({});
       });
   });
-
 });
 
 router.put('/:id/edit',function(req,res,next){
@@ -89,8 +97,13 @@ router.put('/:id/edit',function(req,res,next){
     knex('post')
       .where('id', req.params.id)
       .update(post, 'id')
-      .then(() => {
-         res.redirect('*');
+      .then(ids => {
+        const id = ids[0];
+        res.status(200);
+        res.json({id:id});
+      }).catch(function(error) {
+          res.status(500);
+          res.json({});
       });
   });
 
@@ -105,7 +118,6 @@ router.put('/:id/edit',function(req,res,next){
 
   // TODO - will be having private field on post
 
-  // TODO - work through video as he may cover something useful i havent thoguht of
 
   // TODO - action confirmation to user - ie post created - 'sorry error' or 'success' - return to home screen
 
@@ -120,23 +132,20 @@ router.put('/:id/edit',function(req,res,next){
 
 
 router.delete('/:id',function(req,res,next){
-  // TODO: VALIDATE ID
-const id = req.params.id;
+
+  const id = req.params.id;
 
   knex('post')
     .where('id', id)
     .del()
     .then(() => {
-       res.status(200).end();
+      res.status(200);
+      res.json({});
+    }).catch(function(error) {
+        res.status(500);
+        res.json({});
     });
 });
-
-// when edit button pressed, grab the post fields out of the object in post.js, (grab everything that will be updated).
-// inject all this data into the 'create' page (duplicate create page to edit page
-// or make create page check for data to see if its a new creation or should show data ie its an edit)\
-// when Update post is pressed, call this /update endpoint to overwrite the data in the database.
-// (could not overwrite, but create a new db entry with different date, when retrieving grab one with latest data)
-// Will need Seperate Edit page as need to differentiate between call to create new and call to edit.
 
 
 module.exports = router;

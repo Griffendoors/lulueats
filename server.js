@@ -6,6 +6,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser')
 
 var postsRouter = require('./routes/posts');
+var authenticationRouter = require('./routes/authentication');
 
 var app = express();
 
@@ -19,17 +20,50 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-app.use('/', express.static(`${__dirname}/client/build`));
 
+app.use(express.static(path.join(__dirname, 'build')));
 
 app.use('/posts', postsRouter);
+app.use('/authentication', authenticationRouter);
+/*
 
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '/client/build', 'index.html'));
+
+app.get('/ping', function (req, res) {
+ return res.send('pong');
+});
+*/
+app.get('/', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
 
 
+/* FOR PRODUCTION ONLY
+app.use('/', express.static(`${__dirname}/client/build`));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '/client/build', 'index.html'));
+});
+*/
+/*
+app.use('public', express.static(path.join(__dirname, 'public')));
+// Always return the main index.html
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'index.html'));
+});
+*/
 
+/*
+app.use('/', express.static(`${__dirname}/client/public`));
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '/client/public', 'index.html'));
+});
+*/
+
+
+
+
+
+
+/*
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
@@ -45,5 +79,6 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   next('error');
 });
+*/
 
 module.exports = app;

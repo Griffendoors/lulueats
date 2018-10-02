@@ -87,10 +87,35 @@ class Contact extends Component {
     // TODO: OK OR ERROR - CHECK EVERYWHERE - SERVER TOO - DIFFERENT ACTIONS DIFFERENT STATUSES - IF RESPONSE IS BAD, STAY HERE
 
 
+    renderNav(){
+        return(
+          <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+            <div className="container">
+              <a className="navbar-brand" >Lulu Caitcheon</a>
+              <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i className="fa fa-bars"></i>
+              </button>
+              <div className="collapse navbar-collapse" id="navbarResponsive">
+                <ul className="navbar-nav ml-auto">
+                  <li className="nav-item">
+                  <LinkContainer to="/">
+                    <a className="nav-link">Home</a>
+                  </LinkContainer>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nav>
+        );
 
-  render() {
-    return (
-      <div>
+    }
+
+    render() {
+      return (
+
+
+    <div>
 
           <div className="container">
             <div className="row">

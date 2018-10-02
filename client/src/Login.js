@@ -1,7 +1,8 @@
 
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
+import { Route,withRouter } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
+import { Redirect } from 'react-router';
 
 
 
@@ -13,9 +14,11 @@ class Contact extends Component {
     super(props)
     this.state = {
       email: null,
-      password: null
+      password: null,
+      redirect: false
 
     }
+
   }
   handleEmailChange = (e) => {
     this.setState({email: e.target.value});
@@ -52,11 +55,17 @@ class Contact extends Component {
           }
         }
         else{
-          //this.props.history.push('/post/'+obj.body.id);
-          this.props.setToken(obj.body.token)
+          //obj.body.token is correct /
           //this.props.history.push('/');
-          console.dir(this.props);
-          //console.dir(obj);
+        //  this.props.setToken(obj.body.token);
+          localStorage.setItem('token', JSON.stringify(obj.body.token));
+        //  console.dir(this.props)
+          this.setState({redirect:true})
+
+        //  this.props.history.push({
+        //    pathname: '/',
+      //      state: { token: obj.body.token}
+    //      })
 
         }
 
@@ -67,9 +76,10 @@ class Contact extends Component {
 
   }
 
-
-
-  render() {
+  render(){
+    if(this.state.redirect) {
+      return <Redirect to='/'/>
+    }
     return (
       <div>
 
@@ -97,6 +107,7 @@ class Contact extends Component {
                   <a className="nav-link">Contact</a>
                 </LinkContainer>
               </li>
+
             </ul>
           </div>
         </div>
@@ -169,7 +180,9 @@ class Contact extends Component {
 
 
     );
+
   }
+
 }
 
 export default Contact;

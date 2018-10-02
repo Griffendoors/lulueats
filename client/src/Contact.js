@@ -16,6 +16,7 @@ class Contact extends Component {
       itsMe: true
 
     }
+    console.dir(this.props);
   }
 
   renderNav(){

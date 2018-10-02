@@ -11,23 +11,31 @@ import Contact from './Contact.js';
 import Create from './Create.js';
 import Edit from './Edit.js';
 import Login from './Login.js';
+import Logout from './Logout.js';
+
+
+
+
 
 
 class App extends Component {
 
 
-  constructor(props){
-    super(props);
-    this.state = {
-        token: null
-    }
+  constructor(props) {
+      super(props);
+      this.state = {
+      //  token: null
+      }
   }
 
-  setToken = (token) => {
+
+/*
+  setToken(token) {
     this.setState({token:token});
+    //this.state.history.push('/');
   }
 
-
+*/
 /*
   attemptLogin = (emailAddress,password) => {
     fetch('/authetication/login',{
@@ -67,11 +75,11 @@ class App extends Component {
 */
 
   render() {
-
+/*
     const myLoginObject = (props) => {
         return (
           <Login
-            setToken={this.setToken.bind(this)}
+          //  setToken={this.setToken.bind(this)}
           />
         );
     }
@@ -79,27 +87,26 @@ class App extends Component {
     const myHomeObject = (props) => {
         return (
           <Home
-            token={this.state.token}
+            //token={this.state.token}
           />
         );
     }
-
+*/
 
     return (
       <div className="App">
-        <Route path="/" exact render = {myHomeObject}/>
+        <Route path="/" exact component = {Home}/>
         <Route path="/about" component={About}/>
         <Route path="/post/:id" component={Post}/>
         <Route path="/contact" component={Contact}/>
-        <Route path="/login" render={myLoginObject}/>
         <Route path="/create" component={Create}/>
         <Route path="/edit/:id" component={Edit}/>
+        <Route path="/login" component={Login}/>
+        <Route path="/logout" component = {Logout}/>
 
       </div>
     );
   }
 }
-
-
 
 export default App;
