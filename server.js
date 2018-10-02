@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var bodyParser = require('body-parser')
 
+require('dotenv').config();
+
 var postsRouter = require('./routes/posts');
 var authenticationRouter = require('./routes/authentication');
 
@@ -19,6 +21,9 @@ app.use( bodyParser.json() );       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
+
+console.log(process.env.DB_PASSWORD) // baconpancakes
+console.log(process.env.DB_USER)
 
 
 app.use(express.static(path.join(__dirname, 'build')));
