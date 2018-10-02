@@ -22,8 +22,8 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
   extended: true
 }));
 
-console.log(process.env.DB_PASSWORD) // baconpancakes
-console.log(process.env.DB_USER)
+//console.log(process.env.DB_PASSWORD) // baconpancakes
+//console.log(process.env.DB_USER)
 
 
 app.use(express.static(path.join(__dirname, 'build')));
