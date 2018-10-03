@@ -7,11 +7,46 @@ var bodyParser = require('body-parser')
 
 require('dotenv').config();
 
-var postsRouter = require('./routes/posts');
-var authenticationRouter = require('./routes/authentication');
+const multer = require("multer");
+const cloudinary = require("cloudinary");
+const cloudinaryStorage = require("multer-storage-cloudinary");
+
+
+
 
 var app = express();
 
+cloudinary.config({
+cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+api_key: process.env.CLOUDINARY_API_KEY,
+api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
+
+const storage = cloudinaryStorage({
+cloudinary: cloudinary,
+folder: "lulueats",
+allowedFormats: ["jpg", "png"],
+transformation: [{ width: 500, height: 500, crop: "limit" }]
+});
+const parser = multer({ storage: storage });
+
+
+app.post('/image/masthead', parser.single("image"), (req, res) => {
+  console.dir(req.file) // to see what is returned to you
+  const image = {};
+  image.url = req.file.url;
+  image.id = req.file.public_id;
+  Image.create(image) // save image information in database
+    .then(newImage => res.json(newImage))
+    .catch(err => console.log(err));
+});
+
+
+
+var postsRouter = require('./routes/posts');
+//var imageRouter = require('./routes/image');
+var authenticationRouter = require('./routes/authentication');
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -29,6 +64,7 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.use('/posts', postsRouter);
+//app.use('/image', imageRouter);
 app.use('/authentication', authenticationRouter);
 /*
 

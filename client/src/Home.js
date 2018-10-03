@@ -13,20 +13,19 @@ class Home extends Component {
       numberOfPostsToPreview:3,
       extendedNumberOfPostsToPreview: 99,
       posts: [],
-      authorized: false
+      authorized: true//false
     }
 
   }
 
   componentDidMount(){
-    this.authorize();
+    //this.authorize();
     this.getPosts();
   }
 
   authorize = () => {
-    //localStorage.setItem('user', JSON.stringify(user));
     let token = localStorage.getItem('token');
-    this.checkTokenIsGood(token);
+    if(token !== null) this.checkTokenIsGood(token);
   }
 
 
@@ -38,7 +37,7 @@ class Home extends Component {
         "Content-Type": "application/json"
 
       },
-      body: JSON.stringify(this.token),
+      body: JSON.stringify({token}),
     }).then(r =>  r.json().then(data => ({res: r, body: data})))
       .then(obj => {
       if(!obj.res.ok){

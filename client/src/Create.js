@@ -3,6 +3,8 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
+var axios = require('axios');
+
 
 
 
@@ -16,11 +18,10 @@ class Contact extends Component {
       subtTitle: null,
       author: null,
       body: null,
+      selectedFile: null,
 
     }
   }
-
-  //TODO: CREATE DEDICATED OBJECT IN STATE FOR POST DATA
 
   handleTitleChange = (e) => {
     this.setState({title: e.target.value});
@@ -72,8 +73,6 @@ class Contact extends Component {
   }
 
 
-    // TODO : FUCKED UP REFERSH / URL ENTER / REACT ROUTER CAUGHT BE EXPERSS THING?
-
     // TODO : CLICK POSt PREVIEW; GRAB THE DATA BASED ON THAT ID;
 
     // TODO: ERROR ON BAD POST CREATION
@@ -110,6 +109,34 @@ class Contact extends Component {
         );
 
     }
+    /*
+    <form action='/image/masthead' method="post" enctype="multipart/form-data">
+      <input type='file' name='image' />
+    </form>
+    */
+
+
+    fileChangedHandler = (event) => {
+      this.setState({selectedFile: event.target.files[0]})
+      console.log("changed")
+      console.dir(event.target.files[0])
+    }
+/*
+    uploadHandler = () => {
+      console.log("starting");
+      const formData = new FormData()
+      formData.append('myFile', this.state.selectedFile, this.state.selectedFile.name)
+      axios.post('/image/masthead', formData)
+      console.log("done");
+    }
+*/
+    uploadHandler = () => {
+    //  axios.post('/image/masthead', this.state.selectedFile);
+    const formData = new FormData()
+    formData.append('myFile', this.state.selectedFile, this.state.selectedFile.name)
+    axios.post('/image/masthead', formData)
+    }
+
 
     render() {
       return (
@@ -120,6 +147,10 @@ class Contact extends Component {
           <div className="container">
             <div className="row">
               <div className="col-lg-8 col-md-10 mx-auto">
+
+                <input type="file" onChange={this.fileChangedHandler}></input>
+                <button onClick={this.uploadHandler}>upload</button>
+
                 <form name="sentMessage" id="contactForm" noValidate>
 
                   <div className="control-group">

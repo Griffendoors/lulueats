@@ -8,56 +8,71 @@ var jwt = require('jsonwebtoken');
 /* GET users listing. */
 router.post('/login', function(req, res, next) {
 
-   var loginObject = {
-     status: false,
-     token: null
-   }
-
-   var emailAddress = req.body.email;
+   var email = req.body.email;
    var password = req.body.password;
 
 
-   //Check for emailAddress and password combo from users db
-   var storedEmailAddress = 'test';
-   var storedPassword = '1234';
+  if (!email || !password){
+    res.status(400);
+    res.json({});
+  }
+  else{
+     //trim spaces
+     email = email.trim();
+     password = password.trim();
 
-   if(emailAddress === storedEmailAddress && password === storedPassword){
-     var token = generateToken(req.body);
-     console.log("token: " +token );
-     res.status(200)
-     res.json({token:token});
+
+
+     //TODO: Check for emailAddress and password combo from users db
+     var storedEmailAddress = 'test';
+     var storedPassword = '1234';
+
+     if(email === storedEmailAddress && password === storedPassword){
+       var token = generateToken(email);
+
+       res.status(200);
+       res.json({ email: email, token: token});
+     }
+     else{
+       res.status(403);
+       res.json({});
+     }
    }
-   else{
-     res.status(400)
-     res.json({});
-   }
-   // TODO: res. status 500?
+
 });
 
 router.post('/checkToken', function(req, res, next) {
 
-   let token = req.body.token;
-   let authorized = authorizeToken(token);
-
-
-   if(authorized){
-     res.status(200);
-     res.json({});
+   var token = req.body.token ;
+   if (!token) {
+     console.log("1");
+     return res.status(401).json({message: "Must pass token"});
    }
-   else {
-     res.status(400).end();
-     res.json({});
-   }
+
+  jwt.verify(token, process.env.JWT_SECRET, function(err, email) {
+     if (err){
+            console.dir(err);
+       res.status(403);
+       res.json({});
+     }
+     else{
+       // Refresh that token
+       let newToken = generateToken(email)
+       res.status(200);
+       console.log("3");
+       res.json({
+           email: email,
+           token: token
+       });
+     }
+
+   });
 
 });
 
 //TODO : TRY / CATCHES ON ALL OPERATIONS, AND RETURN SOMETHING USEFUL SO WHOLE APP DOESNT CRASH
 
 
-function authorizeToken(token) {
-  // TODO : COMPLETE THESE FUNCTIONS WITH JWT TOKENS
-  return true;
-}
 
 
 // TODO: CREATE A USER DB TABLE
@@ -65,16 +80,12 @@ function authorizeToken(token) {
 
 
 
-function generateToken(user) {
-  //1. Dont use password and other sensitive fields
-  //2. Use fields that are useful in other parts of the
-  //app/collections/models
-  console.dir(user)
-  var u = {
-   email: user.email,
+function generateToken(email){
+  var user = {
+   email: this.email,
   };
-  return token = jwt.sign(u, process.env.JWT_SECRET, {
-     expiresIn: 60 * 60 * 12 // expires in 12 hours
+  return token = jwt.sign(user, process.env.JWT_SECRET, {
+     expiresIn:  60 * 60 * 24 // expires in 24 hours
   });
 }
 

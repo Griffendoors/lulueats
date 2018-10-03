@@ -29,6 +29,14 @@ class Contact extends Component {
 
   loginClicked = () => {
 
+    let email =  this.state.email;
+    let password = this.state.password;
+
+    if (!email || !password){
+      alert("Please enter email and password");
+      return;
+    }
+
     var credentialsObject = {
       email: this.state.email,
       password: this.state.password,
@@ -55,18 +63,10 @@ class Contact extends Component {
           }
         }
         else{
-          //obj.body.token is correct /
-          //this.props.history.push('/');
-        //  this.props.setToken(obj.body.token);
+          console.dir(obj.body);
           localStorage.setItem('token', JSON.stringify(obj.body.token));
-        //  console.dir(this.props)
+          localStorage.setItem('email', JSON.stringify(obj.body.email));
           this.setState({redirect:true})
-
-        //  this.props.history.push({
-        //    pathname: '/',
-      //      state: { token: obj.body.token}
-    //      })
-
         }
 
       }).catch(function(error) {
