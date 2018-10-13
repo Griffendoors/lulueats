@@ -11,14 +11,44 @@ class Post extends Component {
    super(props)
    this.state = {
      loading: true,
-     itsMe: true,
-     postObject: {}
-
+     postObject: {},
+     authorized: false
    }
+
+ }
+
+ componentDidMount(){
+   this.authorize();
+   this.populate();
+ }
+
+ authorize = () => {
+   let token = localStorage.getItem('token');
+   if(token !== null) this.checkTokenIsGood(token);
  }
 
 
- componentDidMount = () => {
+ checkTokenIsGood = (token) => {
+   fetch('/authentication/checkToken',{
+     method: "POST",
+     headers: {
+       "Accept": "application/json",
+       "Content-Type": "application/json"
+
+     },
+     body: JSON.stringify({token}),
+   }).then(r =>  r.json().then(data => ({res: r, body: data}))).then(obj => {
+     if(!obj.res.ok) throw Error(obj.res.statusText);
+     else this.setState({authorized:true});
+
+   }).catch(function(error) {
+       console.log(error);
+   });
+ }
+
+
+
+ populate = () => {
    var id = this.props.match.params.id;
 
    fetch('/posts/'+id,{
@@ -29,10 +59,7 @@ class Post extends Component {
    })
    .then(r =>  r.json().then(data => ({res: r, body: data})))
    .then(obj => {
-     if(!obj.res.ok){
-       alert("Something went wrong!");
-       throw Error(obj.res.statusText);
-     }
+     if(!obj.res.ok) throw Error(obj.res.statusText);
      else{
        var postObject = obj.body;
        this.setState({postObject:postObject});
@@ -78,9 +105,20 @@ class Post extends Component {
 
  }
 
+ getNiceDateTime(){
+   var fromPost = this.state.postObject.date;
+   var dateObject = new Date(Date.parse(fromPost));
+   var year = dateObject.getFullYear();
+   var month = dateObject.getMonth();
+   var day = dateObject.getDate();
+   var dateReadable = day + "-" + month + "-" + year
+
+   return dateReadable; 
+ }
+
 
  renderControls(){
-   if(this.state.itsMe){
+   if(this.state.authorized){
      return(
        <div className="container">
          <div className="row">
@@ -107,7 +145,7 @@ class Post extends Component {
  }
 
  renderNav(){
-   if(this.state.itsMe){
+   if(this.state.authorized){
      return(
        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
          <div className="container">
@@ -179,6 +217,9 @@ class Post extends Component {
  }
 
  render() {
+
+   var niceDateTime = this.getNiceDateTime(this.state.postObject.date);
+
    if(this.state.loading){
      return(
        <h1>Post Not Found</h1>
@@ -205,8 +246,7 @@ class Post extends Component {
          </div>
 
         {this.renderNav()}
-
-          <header className="masthead" style={{"background-image": "url('../img/bgPost1.jpg')"}}>
+          <header className="masthead" style={{"background-image": "url(\'"+this.state.postObject.banner_image_url+"\')"/*"url('../img/bgPost1.jpg')"*/}}>
             <div className="overlay"></div>
             <div className="container">
               <div className="row">
@@ -214,7 +254,7 @@ class Post extends Component {
                   <div className="post-heading">
                     <h1>{this.state.postObject.title}</h1>
                     <h2 className="subheading">{this.state.postObject.subTitle}</h2>
-                    <span className="meta">Posted by {this.state.postObject.author} on {this.state.postObject.date} </span>
+                    <span className="meta">Posted by {this.state.postObject.author} on {niceDateTime} </span>
                   </div>
                 </div>
               </div>

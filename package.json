@@ -3,11 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www",
-    "heroku-postbuild": "cd client && npm install && npm run build",
-    "devClient": "cd client && npm run start",
-    "devServer": "nodemon bin/www",
-    "dev": "concurrently --kill-others-on-fail \"npm run devServer\" "
+    "start": "nodemon ./bin/www"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -17,6 +13,7 @@
     "debug": "~2.6.9",
     "dotenv": "^6.0.0",
     "express": "~4.16.0",
+    "fs": "0.0.1-security",
     "hbs": "~4.0.1",
     "http-errors": "~1.6.2",
     "jsonwebtoken": "^8.3.0",

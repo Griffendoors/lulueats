@@ -11,13 +11,41 @@ class About extends Component {
     this.state = {
       numberOfPostsToPreview:1,
       posts: [],
-      itsMe: true
-
+      authorized: false
     }
+
+  }
+
+  componentDidMount(){
+    this.authorize();
+  }
+
+  authorize = () => {
+    let token = localStorage.getItem('token');
+    if(token !== null) this.checkTokenIsGood(token);
+  }
+
+
+  checkTokenIsGood = (token) => {
+    fetch('/authentication/checkToken',{
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+
+      },
+      body: JSON.stringify({token}),
+    }).then(r =>  r.json().then(data => ({res: r, body: data}))).then(obj => {
+      if(!obj.res.ok) throw Error(obj.res.statusText);
+      else this.setState({authorized:true});
+
+    }).catch(function(error) {
+        console.log(error);
+    });
   }
 
   renderNav(){
-    if(this.state.itsMe){
+    if(this.state.authorized){
       return(
         <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
           <div className="container">

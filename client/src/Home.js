@@ -13,13 +13,13 @@ class Home extends Component {
       numberOfPostsToPreview:3,
       extendedNumberOfPostsToPreview: 99,
       posts: [],
-      authorized: true//false
+      authorized: false
     }
 
   }
 
   componentDidMount(){
-    //this.authorize();
+    this.authorize();
     this.getPosts();
   }
 
@@ -38,15 +38,9 @@ class Home extends Component {
 
       },
       body: JSON.stringify({token}),
-    }).then(r =>  r.json().then(data => ({res: r, body: data})))
-      .then(obj => {
-      if(!obj.res.ok){
-        alert("Something went wrong!");
-        throw Error(obj.res.statusText);
-      }
-      else{
-        this.setState({authorized:true});
-      }
+    }).then(r =>  r.json().then(data => ({res: r, body: data}))).then(obj => {
+      if(!obj.res.ok) throw Error(obj.res.statusText);
+      else this.setState({authorized:true});
 
     }).catch(function(error) {
         console.log(error);
@@ -81,7 +75,8 @@ class Home extends Component {
   }
 
 
-
+// TODO: EDIT - BANNER IMAGE CHANGE
+// TODO DELETE - REFLECT ALL EDITS / DELETS in DB
 
 
   showMorePosts = () => {

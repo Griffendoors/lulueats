@@ -7,6 +7,8 @@ var bodyParser = require('body-parser')
 
 require('dotenv').config();
 
+const knex = require('./db/knex');
+
 const multer = require("multer");
 const cloudinary = require("cloudinary");
 const cloudinaryStorage = require("multer-storage-cloudinary");
@@ -33,13 +35,23 @@ const parser = multer({ storage: storage });
 
 
 app.post('/image/masthead', parser.single("image"), (req, res) => {
-  console.dir(req.file) // to see what is returned to you
+
   const image = {};
-  image.url = req.file.url;
-  image.id = req.file.public_id;
-  Image.create(image) // save image information in database
-    .then(newImage => res.json(newImage))
-    .catch(err => console.log(err));
+  image.image_url = req.file.url;
+  image.image_id = req.file.public_id;
+
+  knex('image')
+    .insert(image, 'id')
+    .then(() => {
+       res.status(200);
+       res.json(image);
+
+    }).catch(function(error) {
+        console.dir(error);
+        res.status(500);
+        res.json({});
+    });
+
 });
 
 
@@ -52,74 +64,37 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use( bodyParser.json() );       // to support JSON-encoded bodies
-app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
+app.use( bodyParser.json() );
+app.use(bodyParser.urlencoded({
   extended: true
 }));
-
-//console.log(process.env.DB_PASSWORD) // baconpancakes
-//console.log(process.env.DB_USER)
-
 
 app.use(express.static(path.join(__dirname, 'build')));
 
 app.use('/posts', postsRouter);
 //app.use('/image', imageRouter);
 app.use('/authentication', authenticationRouter);
-/*
 
 
-app.get('/ping', function (req, res) {
- return res.send('pong');
-});
-*/
-app.get('/', function (req, res) {
-  res.sendFile(path.join(__dirname, 'build', 'index.html'));
-});
+//TODO : REFRESH ETC FUCKS static
+//TODO: PUT DB DETAILS IN .env
+//TODO: PROD BUILD - KEYS AND .env
 
 
-/* FOR PRODUCTION ONLY
-app.use('/', express.static(`${__dirname}/client/build`));
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '/client/build', 'index.html'));
-});
-*/
-/*
-app.use('public', express.static(path.join(__dirname, 'public')));
-// Always return the main index.html
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'index.html'));
-});
-*/
 
-/*
-app.use('/', express.static(`${__dirname}/client/public`));
-app.get('*', (req, res) => {
-  res.sendFile(path.resolve(__dirname, '/client/public', 'index.html'));
-});
-*/
+if (process.env.NODE_ENV === 'production') {
+    //Express will serve up production assets like main.js file
+    app.use(express.static('/client/build'));
+    //Express will serve up html file if it doesn't recognize the route
+    const path = require('path');
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, 'client/build', 'index.html'))
+    });
+}
 
 
 
 
 
-
-/*
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  next('error');
-});
-*/
 
 module.exports = app;

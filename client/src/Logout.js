@@ -5,7 +5,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Redirect } from 'react-router';
 
 
-class Contact extends Component {
+class Logout extends Component {
 
   constructor(props){
     super(props)
@@ -16,18 +16,19 @@ class Contact extends Component {
 
   }
 
+
+
   componentDidMount(){
-
-    //var millisecondsToWait = 3000;
-    //setTimeout(function() {
-          this.logout();
-            this.setState({redirect:true});
-  //  }, millisecondsToWait);
-
+    let token = localStorage.getItem('token');
+    if(token !== null) this.logout(token);
   }
 
-  logout = () => {
 
+
+  logout = (token) => {
+
+
+//TODO: DONT WORRY TOO MUCH HERE - CHANGING TO COOKIES
 
 
     fetch('/authentication/logout',{
@@ -37,31 +38,15 @@ class Contact extends Component {
         "Content-Type": "application/json"
 
       },
-      token: JSON.stringify(this.props.token),
+      body: JSON.stringify({token}),
     }).then(r =>  r.json().then(data => ({res: r, body: data})))
       .then(obj => {
-        if(!obj.res.ok){
-          if(obj.res.status === 400){
-            alert("Incorrect email or password");
-          }
-          else{
-            alert("Something went wrong!");
-            throw Error(obj.res.statusText);
-          }
-        }
+        console.dir(obj)
+        if(!obj.res.ok) throw Error(obj.res.statusText);
         else{
-          //obj.body.token is correct /
-          //this.props.history.push('/');
           localStorage.setItem('token', null);
-        //  console.dir(this.props)
-          this.setState({redirect:true})
-
-        //  this.props.history.push({
-        //    pathname: '/',
-      //      state: { token: obj.body.token}
-    //      })
-
         }
+        this.setState({redirect:true});
 
       }).catch(function(error) {
           console.log(error);
@@ -125,4 +110,4 @@ class Contact extends Component {
 
 }
 
-export default Contact;
+export default Logout;

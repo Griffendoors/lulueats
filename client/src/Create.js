@@ -7,8 +7,6 @@ var axios = require('axios');
 
 
 
-
-
 class Contact extends Component {
 
   constructor(props){
@@ -19,6 +17,8 @@ class Contact extends Component {
       author: null,
       body: null,
       selectedFile: null,
+
+
 
     }
   }
@@ -36,42 +36,105 @@ class Contact extends Component {
     this.setState({body: e.target.value});
   }
 
+  fileChangedHandler = (event) => {
+    this.setState({selectedFile: event.target.files[0]})
+  }
+
+/*
+  uploadHandler = () => {
+    const formData = new FormData()
+    formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
+    axios.post('/image/masthead', formData);
+  }
+*/
 
   createPostClicked = () => {
 
-    var postObject = {
-      title: this.state.title,
-      subTitle: this.state.subTitle,
-      author: this.state.author,
-      body: this.state.body,
-    };
+    if(this.state.selectedFile === null) {
+      var r = window.confirm("Save post without banner image?");
+      if (r !== true) return;
+    }
+
+      const formData = new FormData()
+
+      if(this.state.selectedFile !== null){
+        formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
+        axios.post('/image/masthead', formData).then(response => {
+          let banner_image_id = response.data.image_id;
+          let banner_image_url = response.data.image_url;
+
+          var postObject = {
+            title: this.state.title,
+            subTitle: this.state.subTitle,
+            author: this.state.author,
+            body: this.state.body,
+            banner_image_url: banner_image_url
+          };
+
+          fetch('/posts/create',{
+            method: "POST",
+            headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+
+            },
+            body: JSON.stringify(postObject),
+          }).then(r =>  r.json().then(data => ({res: r, body: data})))
+            .then(obj => {
+              if(!obj.res.ok){
+                alert("Something went wrong!");
+                throw Error(obj.res.statusText);
+              }
+              else{
+                this.props.history.push('/post/'+obj.body.id);
+              }
+
+            }).catch(function(error) {
+                console.log(error);
+            });
 
 
-    fetch('/posts/create',{
-      method: "POST",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+        });
+      }
+      else{
 
-      },
-      body: JSON.stringify(postObject),
-    }).then(r =>  r.json().then(data => ({res: r, body: data})))
-      .then(obj => {
-        if(!obj.res.ok){
-          alert("Something went wrong!");
-          throw Error(obj.res.statusText);
-        }
-        else{
-          this.props.history.push('/post/'+obj.body.id);
-        }
+        var postObject = {
+          title: this.state.title,
+          subTitle: this.state.subTitle,
+          author: this.state.author,
+          body: this.state.body,
+          banner_image_url: null
+        };
 
-      }).catch(function(error) {
-          console.log(error);
-      });
+        fetch('/posts/create',{
+          method: "POST",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+
+          },
+          body: JSON.stringify(postObject),
+        }).then(r =>  r.json().then(data => ({res: r, body: data})))
+          .then(obj => {
+            if(!obj.res.ok){
+              alert("Something went wrong!");
+              throw Error(obj.res.statusText);
+            }
+            else{
+              this.props.history.push('/post/'+obj.body.id);
+            }
+
+          }).catch(function(error) {
+              console.log(error);
+          });
+
+      }
 
 
   }
 
+
+    // TODO: COMPLETE OPERATIONS AROUND IMAGES - CAN EDIT EDIT IMAGE. DELETE WILL REMOVE FROM CLOUD ETC
 
     // TODO : CLICK POSt PREVIEW; GRAB THE DATA BASED ON THAT ID;
 
@@ -109,33 +172,8 @@ class Contact extends Component {
         );
 
     }
-    /*
-    <form action='/image/masthead' method="post" enctype="multipart/form-data">
-      <input type='file' name='image' />
-    </form>
-    */
 
 
-    fileChangedHandler = (event) => {
-      this.setState({selectedFile: event.target.files[0]})
-      console.log("changed")
-      console.dir(event.target.files[0])
-    }
-/*
-    uploadHandler = () => {
-      console.log("starting");
-      const formData = new FormData()
-      formData.append('myFile', this.state.selectedFile, this.state.selectedFile.name)
-      axios.post('/image/masthead', formData)
-      console.log("done");
-    }
-*/
-    uploadHandler = () => {
-    //  axios.post('/image/masthead', this.state.selectedFile);
-    const formData = new FormData()
-    formData.append('myFile', this.state.selectedFile, this.state.selectedFile.name)
-    axios.post('/image/masthead', formData)
-    }
 
 
     render() {
@@ -149,7 +187,6 @@ class Contact extends Component {
               <div className="col-lg-8 col-md-10 mx-auto">
 
                 <input type="file" onChange={this.fileChangedHandler}></input>
-                <button onClick={this.uploadHandler}>upload</button>
 
                 <form name="sentMessage" id="contactForm" noValidate>
 

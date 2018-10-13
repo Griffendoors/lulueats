@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
-
+var axios = require('axios');
 
 
 
@@ -17,7 +17,8 @@ class Edit extends Component {
         title: null,
         subTitle: null,
         author: null,
-        body: null
+        body: null,
+        selectedFile: null,
       }
     }
   }
@@ -43,7 +44,15 @@ class Edit extends Component {
     this.setState({postObject: postObject});
   }
 
+  fileChangedHandler = (event) => {
+    this.setState({selectedFile: event.target.files[0]})
+  }
+
+
+
   updatePostClicked = () => {
+
+
 
     var id = this.state.postObject.id;
 

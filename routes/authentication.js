@@ -3,7 +3,8 @@ var router = express.Router();
 
 const knex = require('../db/knex');
 
-var jwt = require('jsonwebtoken');
+const fs   = require('fs');
+const jwt  = require('jsonwebtoken');
 
 /* GET users listing. */
 router.post('/login', function(req, res, next) {
@@ -31,7 +32,7 @@ router.post('/login', function(req, res, next) {
        var token = generateToken(email);
 
        res.status(200);
-       res.json({ email: email, token: token});
+       res.json({token: token});
      }
      else{
        res.status(403);
@@ -41,37 +42,46 @@ router.post('/login', function(req, res, next) {
 
 });
 
+//TODO: REFRESH TOKENS
+
 router.post('/checkToken', function(req, res, next) {
 
-   var token = req.body.token ;
+    var publicKEY  = fs.readFileSync('./public.key', 'utf8');
+
+   var token = req.body.token;
+
+
    if (!token) {
-     console.log("1");
      return res.status(401).json({message: "Must pass token"});
    }
 
-  jwt.verify(token, process.env.JWT_SECRET, function(err, email) {
-     if (err){
-            console.dir(err);
-       res.status(403);
-       res.json({});
-     }
-     else{
-       // Refresh that token
-       let newToken = generateToken(email)
-       res.status(200);
-       console.log("3");
-       res.json({
-           email: email,
-           token: token
-       });
-     }
+   var i  = 'GWA';          // Issuer
+   var s  = 'lulucaitcheon@gmail.com';        // Subject
+   var a  = 'http://lulueats'; // Audience
 
-   });
+   var verifyOptions = {
+    issuer:  i,
+    subject:  s,
+    audience:  a,
+    expiresIn:  "12h",
+    algorithm:  ["RS256"]
+   };
+
+
+   //var token = req.headers['x-access-token'] || req.body.token
+   jwt.verify(token,publicKEY,function(err,token){
+    if(err){
+      res.status(401).json({});
+    }else{
+      res.status(200).json({});
+    }
+  });
+
 
 });
 
 //TODO : TRY / CATCHES ON ALL OPERATIONS, AND RETURN SOMETHING USEFUL SO WHOLE APP DOESNT CRASH
-
+//TODO : CHANGE TO COOKIE FOR TOKEN
 
 
 
@@ -81,13 +91,68 @@ router.post('/checkToken', function(req, res, next) {
 
 
 function generateToken(email){
-  var user = {
-   email: this.email,
+
+  var payload = {
+   email: email
   };
-  return token = jwt.sign(user, process.env.JWT_SECRET, {
-     expiresIn:  60 * 60 * 24 // expires in 24 hours
-  });
+
+  var privateKEY  = fs.readFileSync('./private.key', 'utf8');
+
+
+  var i  = 'GWA';          // Issuer
+  var s  = 'lulucaitcheon@gmail.com';        // Subject
+  var a  = 'http://lulueats'; // Audience
+
+  var signOptions = {
+   issuer:  i,
+   subject:  s,
+   audience:  a,
+   expiresIn:  "24h",
+   algorithm:  "RS256"
+  };
+
+  var token = jwt.sign(payload, privateKEY, signOptions);
+  return token;
+
 }
+
+router.post('/logout', function(req, res, next) {
+
+    var publicKEY  = fs.readFileSync('./public.key', 'utf8');
+
+   var token = req.body.token;
+
+   console.log("token" + token)
+
+
+   if (!token) {
+     return res.status(401).json({message: "Must pass token"});
+   }
+
+   var i  = 'GWA';          // Issuer
+   var s  = 'lulucaitcheon@gmail.com';        // Subject
+   var a  = 'http://lulueats'; // Audience
+
+   var verifyOptions = {
+    issuer:  i,
+    subject:  s,
+    audience:  a,
+    expiresIn:  "12h",
+    algorithm:  ["RS256"]
+   };
+
+
+   //var token = req.headers['x-access-token'] || req.body.token
+   jwt.verify(token,publicKEY,function(err,token){
+    if(err){
+      res.status(401).json({});
+    }else{
+      res.status(200).json({});
+    }
+  });
+
+
+});
 
 
 

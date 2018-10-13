@@ -54,18 +54,12 @@ class Contact extends Component {
     }).then(r =>  r.json().then(data => ({res: r, body: data})))
       .then(obj => {
         if(!obj.res.ok){
-          if(obj.res.status === 400){
-            alert("Incorrect email or password");
-          }
-          else{
-            alert("Something went wrong!");
-            throw Error(obj.res.statusText);
-          }
+          if(obj.res.status === 403)  alert("Incorrect email or password");
+          else throw Error(obj.res.statusText);
         }
         else{
-          console.dir(obj.body);
-          localStorage.setItem('token', JSON.stringify(obj.body.token));
-          localStorage.setItem('email', JSON.stringify(obj.body.email));
+          localStorage.setItem('token', obj.body.token);
+
           this.setState({redirect:true})
         }
 

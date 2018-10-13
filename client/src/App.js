@@ -15,83 +15,17 @@ import Logout from './Logout.js';
 
 
 
-
-
-
 class App extends Component {
 
 
   constructor(props) {
       super(props);
       this.state = {
-      //  token: null
       }
   }
 
-
-/*
-  setToken(token) {
-    this.setState({token:token});
-    //this.state.history.push('/');
-  }
-
-*/
-/*
-  attemptLogin = (emailAddress,password) => {
-    fetch('/authetication/login',{
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: {
-        emailAddress : emailAddress,
-        password: password
-      }
-    })
-    .then(res => res.json())
-    .then(token => this.setState({token}))
-
-
-    .then(r =>  r.json().then(data => ({res: r, body: data})))
-    .then(obj => {
-      if(!obj.res.ok){
-        alert("Something went wrong!");
-        throw Error(obj.res.statusText);
-      }
-      else{
-        var postObject = obj.body;
-        this.setState({postObject:postObject});
-                  this.props.history.push('/post/'+obj.body.id);
-      }
-
-    }).then(() => {
-        this.setState({loading: false});
-      })
-      .catch(function(error) {
-         console.log(error);
-    });
-
-  }
-*/
 
   render() {
-/*
-    const myLoginObject = (props) => {
-        return (
-          <Login
-          //  setToken={this.setToken.bind(this)}
-          />
-        );
-    }
-
-    const myHomeObject = (props) => {
-        return (
-          <Home
-            //token={this.state.token}
-          />
-        );
-    }
-*/
 
     return (
       <div className="App">

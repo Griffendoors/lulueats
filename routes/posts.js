@@ -3,6 +3,9 @@ var router = express.Router();
 
 const knex = require('../db/knex');
 
+//TODO SECURE THESE AND ALL APIS/RESOURCES WITH TOKEN CHECK
+
+
 /* GET users listing. */
 router.get('/allPreviews', function(req, res, next) {
   knex('post')
@@ -49,6 +52,8 @@ function insertOrUpdate(req,res,callback){
         var subTitle = postObject.subTitle;
         var author = postObject.author;
         var body = postObject.body;
+        var banner_image_url = null;
+        if(postObject.banner_image_url !== null) banner_image_url = postObject.banner_image_url;
         if(author === null) author = "Lulu Caitcheon";
 
         const post = {
@@ -57,6 +62,7 @@ function insertOrUpdate(req,res,callback){
           author: author,
           body: body,
           private: false,
+          banner_image_url: banner_image_url,
         };
         callback(post);
     }
