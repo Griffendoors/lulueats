@@ -53,6 +53,7 @@ class Contact extends Component {
       body: JSON.stringify(credentialsObject),
     }).then(r =>  r.json().then(data => ({res: r, body: data})))
       .then(obj => {
+        console.log(obj);
         if(!obj.res.ok){
           if(obj.res.status === 403)  alert("Incorrect email or password");
           else throw Error(obj.res.statusText);

@@ -79,12 +79,13 @@ app.use('/authentication', authenticationRouter);
 //TODO : REFRESH ETC FUCKS static
 //TODO: PUT DB DETAILS IN .env
 //TODO: PROD BUILD - KEYS AND .env
+//TODO everything that should be in gitignore and env is in there, and stuff that shouldnt, isnt?
 
 
 
 if (process.env.NODE_ENV === 'production') {
     //Express will serve up production assets like main.js file
-    app.use(express.static('/client/build'));
+    app.use(express.static('client/build'));
     //Express will serve up html file if it doesn't recognize the route
     const path = require('path');
     app.get('/', (req, res) => {
