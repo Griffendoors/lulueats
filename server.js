@@ -80,6 +80,7 @@ app.use('/authentication', authenticationRouter);
 //TODO: PUT DB DETAILS IN .env
 //TODO: PROD BUILD - KEYS AND .env
 //TODO everything that should be in gitignore and env is in there, and stuff that shouldnt, isnt?
+// TODO: Remove build from push -     "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build"
 
 
 
