@@ -15,6 +15,8 @@ router.get('/allPreviews', function(req, res, next) {
     res.status(200);
     res.json(posts);
   }).catch(function(error) {
+      console.log("error getting all previews:");
+      console.log(error);
       res.status(500);
       res.json({});
   });

@@ -59,8 +59,8 @@ class Home extends Component {
     .then(r =>  r.json().then(data => ({res: r, body: data})))
     .then(obj => {
       if(!obj.res.ok){
-        alert("Something went wrong!");
-        throw Error(obj.res.statusText);
+        if(obj.res.status === 401) console.log("Not logged in")
+        else console.log("something went wrong");
       }
       else{
         var posts = obj.body;
