@@ -71,9 +71,7 @@ app.use(bodyParser.urlencoded({
 
 
 
-app.use('/posts', postsRouter);
-//app.use('/image', imageRouter);
-app.use('/authentication', authenticationRouter);
+
 
 
 //TODO : REFRESH PROBLEM
@@ -97,7 +95,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 
-
+app.use('/posts', postsRouter);
+//app.use('/image', imageRouter);
+app.use('/authentication', authenticationRouter);
 
 
 

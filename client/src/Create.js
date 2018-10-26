@@ -132,8 +132,20 @@ class Contact extends Component {
 
 
   }
+/*
+    renderActionBar = () => {
+      return(
+        <div>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-info">Info</button>
+        <button type="button" class="btn btn-info">Info</button>
+        </div>
+      );
+    }
 
-
+*/
     // TODO: COMPLETE OPERATIONS AROUND IMAGES - CAN EDIT EDIT IMAGE. DELETE WILL REMOVE FROM CLOUD ETC
 
     // TODO : CLICK POSt PREVIEW; GRAB THE DATA BASED ON THAT ID;
@@ -214,6 +226,14 @@ class Contact extends Component {
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Body</label>
+                      <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
+                      <p className="help-block text-danger"></p>
+                    </div>
+                  </div>
+                  <div className="control-group">
+                    <div className="form-group floating-label-form-group controls">
+                      <label>Action</label>
+                      {/*this.renderActionBar()*/}
                       <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
                       <p className="help-block text-danger"></p>
                     </div>
