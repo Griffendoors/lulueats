@@ -28,7 +28,8 @@ class App extends Component {
   render() {
 
     return (
-      <div className="App">
+      <BrowserRouter>
+        <Switch>
         <Route path="/" exact component = {Home}/>
         <Route path="/about" component={About}/>
         <Route path="/post/:id" component={Post}/>
@@ -37,6 +38,9 @@ class App extends Component {
         <Route path="/edit/:id" component={Edit}/>
         <Route path="/login" component={Login}/>
         <Route path="/logout" component = {Logout}/>
+        <Route component = {Home}/>
+      </Switch>
+    </BrowserRouter>
 
       </div>
     );
