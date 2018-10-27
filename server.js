@@ -71,9 +71,9 @@ app.use(bodyParser.urlencoded({
 
 
 
-app.use('/posts/*', postsRouter);
+//app.use('/posts/*', postsRouter);
 //app.use('/image', imageRouter);
-app.use('/authentication', authenticationRouter);
+//app.use('/authentication', authenticationRouter);
 
 
 //TODO : REFRESH PROBLEM
@@ -90,7 +90,7 @@ if (process.env.NODE_ENV === 'production') {
 
   app.use(express.static(path.join(__dirname, 'client/build')));
   // Handle React routing, return all requests to React app
-  app.get('/', function(req, res) {
+  app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
 
   });
