@@ -188,6 +188,12 @@ class Home extends Component {
     }
   }
 
+  renderShowMoreButton = () => {
+    if(this.state.posts.length < 4) return null;
+    else return <a className="btn btn-primary float-right" href = "javascript:;" onClick={this.showMorePosts} >Older Posts &rarr;</a>
+
+  }
+
   render() {
     return (
   <div>
@@ -218,7 +224,7 @@ class Home extends Component {
         {this.renderPostPreviews()}
 
         <div className="clearfix">
-          <a className="btn btn-primary float-right" href = "javascript:;" onClick={this.showMorePosts} >Older Posts &rarr;</a>
+        {this.renderShowMoreButton()}
         </div>
       </div>
     </div>
