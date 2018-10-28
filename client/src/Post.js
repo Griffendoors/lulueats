@@ -3,6 +3,9 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
+let Parser = require('html-react-parser');
+
+
 
 
 class Post extends Component {
@@ -216,9 +219,19 @@ class Post extends Component {
    }
  }
 
+ processBody = () => {
+   let processedBody = this.state.postObject.body;
+
+   return (Parser(processedBody));
+ }
+
  render() {
 
-   var niceDateTime = this.getNiceDateTime(this.state.postObject.date);
+   let niceDateTime = this.getNiceDateTime(this.state.postObject.date);
+
+
+
+
 
    if(this.state.loading){
      return(
@@ -267,7 +280,7 @@ class Post extends Component {
               <div className="row">
                 <div className="col-lg-8 col-md-10 mx-auto">
 
-                  <p>{this.state.postObject.body}</p>
+                  <p>{this.processBody()}</p>
 
                 </div>
               </div>

@@ -54,6 +54,26 @@ app.post('/image/masthead', parser.single("image"), (req, res) => {
 
 });
 
+app.post('/image/inline', parser.single("image"), (req, res) => {
+
+  const image = {};
+  image.image_url = req.file.url;
+  image.image_id = req.file.public_id;
+
+  knex('image')
+    .insert(image, 'id')
+    .then(() => {
+       res.status(200);
+       res.json(image);
+
+    }).catch(function(error) {
+        console.dir(error);
+        res.status(500);
+        res.json({});
+    });
+
+});
+
 
 
 var postsRouter = require('./routes/posts');
