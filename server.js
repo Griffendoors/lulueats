@@ -95,7 +95,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use('/posts', postsRouter);
 //app.use('/image', imageRouter);
-app.use('/authentication', authenticationRouter);
+app.use('/authentication', authenticationRouter); 
 
 
 
