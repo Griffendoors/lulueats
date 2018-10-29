@@ -48,11 +48,11 @@ class Edit extends Component {
   updatePostClicked = () => {
 
     if(this.state.title === null){
-      this.hideCreateWaitModal();
+      this.hideUploadModal();
       return alert("Please enter Post Title");
     }
     if(this.state.subTitle === null){
-      this.hideCreateWaitModal();
+      this.hideUploadModal();
       return alert("Please enter Post Subtitle");
     }
 
@@ -95,7 +95,7 @@ class Edit extends Component {
             throw Error(obj.res.statusText);
           }
           else{
-              this.hideCreateWaitModal();
+              this.hideUploadModal();
             this.props.history.push('/post/'+obj.body.id);
           }
 
@@ -107,7 +107,7 @@ class Edit extends Component {
       else {
         var postObject = {
           title: this.state.title,
-          subTitle: this.state.ubTitle,
+          subTitle: this.state.subTitle,
           author: this.state.author,
           body: this.state.body,
           banner_image_url: this.state.banner_image_url
@@ -130,7 +130,7 @@ class Edit extends Component {
             throw Error(obj.res.statusText);
           }
           else{
-              this.hideCreateWaitModal();
+              this.hideUploadModal();
             this.props.history.push('/post/'+obj.body.id);
           }
 

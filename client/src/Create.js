@@ -241,6 +241,8 @@ class Create extends Component {
     );
   }
 
+  // TODO : EDIT NOT WORKING
+
   //TODO : IMAGE SIZE GOOD FOR MOBILE AND WIDE - MASTHEAD
 
   //TODO : HIDE MODAL ON UPLOAD CANCEL
