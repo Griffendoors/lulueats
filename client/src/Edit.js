@@ -12,42 +12,31 @@ class Edit extends Component {
   constructor(props){
     super(props)
     this.state = {
-      postObject: {
         id: this.props.match.params.id,
         title: null,
         subTitle: null,
         author: null,
         body: null,
         selectedFile: null,
-      }
+        banner_image_url: null
     }
   }
 
   handleTitleChange = (e) => {
-    var postObject = this.state.postObject;
-    postObject.title =  e.target.value;
-    this.setState({postObject: postObject});
+    this.setState({title: e.target.value});
   }
   handleSubTitleChange = (e) => {
-    var postObject = this.state.postObject;
-    postObject.subTitle =  e.target.value;
-    this.setState({postObject: postObject});
+    this.setState({subTitle: e.target.value});
   }
   handleAuthorChange = (e) => {
-    var postObject = this.state.postObject;
-    postObject.author =  e.target.value;
-    this.setState({postObject: postObject});
+    this.setState({author: e.target.value});
   }
   handleBodyChange = (e) => {
-    var postObject = this.state.postObject;
-    postObject.body =  e.target.value;
-    this.setState({postObject: postObject});
+    this.setState({body: e.target.value});
   }
 
   fileChangedHandler = (event) => {
-    var postObject = this.state.postObject;
-    postObject.selectedFile =  event.target.files[0]
-    this.setState({postObject: postObject})
+    this.setState({selectedFile: event.target.files[0]})
   }
 
   cancelClicked = () => {
@@ -58,33 +47,38 @@ class Edit extends Component {
 
   updatePostClicked = () => {
 
-    if(this.state.postObject.title === null) return alert("Please enter Post Title");
-    if(this.state.postObject.subTitle === null) return alert("Please enter Post Subtitle");
+    if(this.state.title === null){
+      this.hideCreateWaitModal();
+      return alert("Please enter Post Title");
+    }
+    if(this.state.subTitle === null){
+      this.hideCreateWaitModal();
+      return alert("Please enter Post Subtitle");
+    }
 
 
-    if(this.state.postObject.selectedFile === null) {
+    if(this.state.selectedFile === null && this.state.banner_image_url === null) {
       var r = window.confirm("Save post without banner image?");
       if (r !== true) return;
     }
 
     const formData = new FormData();
 
-    if(this.state.postObject.selectedFile !== null && this.state.postObject.selectedFile !== undefined){
-      console.log(this.state.postObject.selectedFile)
-      formData.append('image', this.state.postObject.selectedFile, this.state.postObject.selectedFile.name);
+    if(this.state.selectedFile !== null && this.state.selectedFile !== undefined){
+      formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
       axios.post('/image/masthead', formData).then(response => {
         let banner_image_id = response.data.image_id;
         let banner_image_url = response.data.image_url;
 
         var postObject = {
-          title: this.state.postObject.title,
-          subTitle: this.state.postObject.subTitle,
-          author: this.state.postObject.author,
-          body: this.state.postObject.body,
+          title: this.state.title,
+          subTitle: this.state.subTitle,
+          author: this.state.author,
+          body: this.state.body,
           banner_image_url: banner_image_url
         };
 
-        var id = this.state.postObject.id;
+        var id = this.state.id;
 
         fetch('/posts/'+id+'/edit',{
           method: "PUT",
@@ -101,6 +95,7 @@ class Edit extends Component {
             throw Error(obj.res.statusText);
           }
           else{
+              this.hideCreateWaitModal();
             this.props.history.push('/post/'+obj.body.id);
           }
 
@@ -111,14 +106,14 @@ class Edit extends Component {
       }
       else {
         var postObject = {
-          title: this.state.postObject.title,
-          subTitle: this.state.postObject.ubTitle,
-          author: this.state.postObject.author,
-          body: this.state.postObject.body,
-          banner_image_url: null
+          title: this.state.title,
+          subTitle: this.state.ubTitle,
+          author: this.state.author,
+          body: this.state.body,
+          banner_image_url: this.state.banner_image_url
         };
 
-        var id = this.state.postObject.id;
+        var id = this.state.id;
 
         fetch('/posts/'+id+'/edit',{
           method: "PUT",
@@ -135,6 +130,7 @@ class Edit extends Component {
             throw Error(obj.res.statusText);
           }
           else{
+              this.hideCreateWaitModal();
             this.props.history.push('/post/'+obj.body.id);
           }
 
@@ -152,7 +148,7 @@ class Edit extends Component {
 
     componentDidMount = () => {
 
-      var id = this.state.postObject.id;
+      var id = this.state.id;
 
       fetch('/posts/'+id,{
         method: "GET",
@@ -167,8 +163,14 @@ class Edit extends Component {
           throw Error(obj.res.statusText);
         }
         else{
-          var postObject = obj.body;
-          this.setState({postObject:postObject});
+          this.setState({
+            title:obj.body.title,
+            subTitle:obj.body.subTitle,
+            author:obj.body.author,
+            body:obj.body.body,
+            banner_image_url:obj.body.banner_image_url,
+
+          });
         }
 
       }).then(() => {
@@ -181,35 +183,43 @@ class Edit extends Component {
     }
 
 
+    hideCreateWaitModal = () => {
+       let modal = document.getElementById("updateWaitModal").click();
+    }
+
+    hideUploadModal = () => {
+       let modal = document.getElementById("uploadModal").click();
+    }
+
+
 
 
       addType = (newType) => {
+        let prefix, suffix;
         if(newType === "sectionHeading"){
-          let prefix = "<h2 className=\"section-heading\">";
-          let suffix = "</h2>";
+          prefix = "<h2 className=\"section-heading\">";
+          suffix = "</h2>";
         }
         else if(newType === "p"){
-          let prefix = "<p>";
-          let suffix = "</p>";
+          prefix = "<p>";
+          suffix = "</p>";
         }
         else if(newType === "quote"){
-          let prefix = "<blockquote className=\"blockquote\">";
-          let suffix = "</blockquote>";
+          prefix = "<blockquote className=\"blockquote\">";
+          suffix = "</blockquote>";
         }
         else if(newType === "imageCaption"){
-          let prefix = "<span className=\"caption text-muted\">";
-          let suffix = "</span>";
+          prefix = "<span className=\"caption text-muted\">";
+          suffix = "</span>";
         }
         else if(newType === "lineBreak"){
-          let prefix = "<br>";
-          let suffix = "</br>";
+          prefix = "<br>";
+          suffix = "</br>";
         }
 
-        let po = this.state.postObject
-        let body = po.body;
+        let body = this.state.body
         body = body + prefix + suffix;
-        po.body = body;
-        this.setState({postObject:po})
+        this.setState({body:body})
 
       }
 
@@ -223,12 +233,12 @@ class Edit extends Component {
         axios.post('/image/inline', formData).then(response => {
           let image_url = response.data.image_url;
 
-          alert("done")
           let prefix = "<img className=\"img-fluid\" src="+image_url+" alt=\"\">"
           let suffix = "</img>";
-          let body = this.state.postObject.body;
+          let body = this.state.body;
           body = body + prefix + suffix;
           this.setState({body:body})
+          this.hideUploadModal();
 
         });
 
@@ -241,7 +251,7 @@ class Edit extends Component {
       renderActionBar = () => {
 
             let mainImageButtonType = "btn btn-success btn-file";
-            if(this.state.postObject.selectedFile === null) mainImageButtonType = "btn btn-secondary btn-file";
+            if(this.state.selectedFile === null && this.state.banner_image_url === null) mainImageButtonType = "btn btn-secondary btn-file";
 
 
             return(
@@ -252,21 +262,40 @@ class Edit extends Component {
                     <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
                 <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
                 <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
-                <span class="btn btn-success btn-file">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
+                <span class="btn btn-success btn-file"  data-toggle="modal" data-target="#uploadModal">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
                 <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
                 <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
                 <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
-                <button type = "button" className="btn btn-danger" onClick={this.updatePostClicked}>Edit Post</button>
+                <button type = "button" className="btn btn-danger"  data-toggle="modal" data-target="#updateWaitModal"  onClick={this.updatePostClicked}>Edit Post</button>
               </div>
             </div>
           </div>
         );
       }
 
-
     render() {
       return (
         <div>
+
+          <div className="modal fade" id="updateWaitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalLongTitle">Updating Post . . .</h5>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title" id="exampleModalLongTitle">Uploading image . . .</h5>
+                </div>
+              </div>
+            </div>
+          </div>
 
           <div className="container">
             <div className="row">
@@ -276,28 +305,28 @@ class Edit extends Component {
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Title</label>
-                      <input type="text" className="form-control" placeholder="Title" id="title" required data-validation-required-message="Please enter post title." value={this.state.postObject.title} onChange={this.handleTitleChange}></input>
+                      <input type="text" className="form-control" placeholder="Title" id="title" required data-validation-required-message="Please enter post title." value={this.state.title} onChange={this.handleTitleChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Author</label>
-                      <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" required data-validation-required-message="Please enter the author of this post." value={this.state.postObject.author} onChange={this.handleAuthorChange}></input>
+                      <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" required data-validation-required-message="Please enter the author of this post." value={this.state.author} onChange={this.handleAuthorChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group col-xs-12 floating-label-form-group controls">
                       <label>Subtitle</label>
-                      <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.postObject.subTitle} onChange={this.handleSubTitleChange}></input>
+                      <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Body</label>
-                      <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.postObject.body} onChange={this.handleBodyChange}></textarea>
+                      <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>

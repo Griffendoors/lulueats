@@ -46,8 +46,14 @@ class Create extends Component {
 
   createPostClicked = () => {
 
-    if(this.state.title === null) return alert("Please enter Post Title");
-    if(this.state.subTitle === null) return alert("Please enter Post Subtitle");
+    if(this.state.title === null){
+      this.hideCreateWaitModal();
+      return alert("Please enter Post Title");
+    }
+    if(this.state.subTitle === null){
+      this.hideCreateWaitModal();
+      return alert("Please enter Post Subtitle");
+    }
 
 
     if(this.state.selectedFile === null) {
@@ -138,8 +144,11 @@ class Create extends Component {
   }
 
   hideCreateWaitModal = () => {
-     document.getElementById("createWaitModal").close();
+     let modal = document.getElementById("createWaitModal").click();
+  }
 
+  hideUploadModal = () => {
+     let modal = document.getElementById("uploadModal").click();
   }
 
 
@@ -192,12 +201,12 @@ class Create extends Component {
     axios.post('/image/inline', formData).then(response => {
       let image_url = response.data.image_url;
 
-      alert("done")
       let prefix = "<img className=\"img-fluid\" src="+image_url+" alt=\"\">"
       let suffix = "</img>";
       let body = this.state.body;
       body = body + prefix + suffix;
       this.setState({body:body})
+      this.hideUploadModal();
 
     });
 
@@ -221,7 +230,7 @@ class Create extends Component {
             <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
             <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
             <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
-            <span class="btn btn-success btn-file">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
+            <span class="btn btn-success btn-file"  data-toggle="modal" data-target="#uploadModal">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
             <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
             <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
             <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
@@ -231,6 +240,18 @@ class Create extends Component {
       </div>
     );
   }
+
+  //TODO : IMAGE SIZE GOOD FOR MOBILE AND WIDE - MASTHEAD
+
+  //TODO : HIDE MODAL ON UPLOAD CANCEL
+
+  //TODO: DELETE ALSO DELETES CLOUDINARY IMAGES (INLINE AND MAIN)
+
+  //TODO: EDIT PAGE : SHOW IMAGES
+
+  // TODO : MODAL HIDE ALL FUCKED UP
+
+  //TODO : CALLING A NULL API SOMEWHERE
 
   // TODO: BANNER IMAGE RES BAD AND DONT SEE ALL ON MOBILE
 
@@ -272,7 +293,17 @@ class Create extends Component {
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">Please Wait . . .</h5>
+                <h5 className="modal-title" id="exampleModalLongTitle">Creating Post . . .</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLongTitle">Uploading image . . .</h5>
               </div>
             </div>
           </div>
