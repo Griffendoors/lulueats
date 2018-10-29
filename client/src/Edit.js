@@ -69,7 +69,8 @@ class Edit extends Component {
 
     const formData = new FormData();
 
-    if(this.state.selectedFile !== null){
+    if(this.state.postObject.selectedFile !== null && this.state.postObject.selectedFile !== undefined){
+      console.log(this.state.postObject.selectedFile)
       formData.append('image', this.state.postObject.selectedFile, this.state.postObject.selectedFile.name);
       axios.post('/image/masthead', formData).then(response => {
         let banner_image_id = response.data.image_id;
@@ -111,7 +112,7 @@ class Edit extends Component {
       else {
         var postObject = {
           title: this.state.postObject.title,
-          subTitle: this.state.spostObject.ubTitle,
+          subTitle: this.state.postObject.ubTitle,
           author: this.state.postObject.author,
           body: this.state.postObject.body,
           banner_image_url: null
@@ -186,38 +187,29 @@ class Edit extends Component {
         if(newType === "sectionHeading"){
           let prefix = "<h2 className=\"section-heading\">";
           let suffix = "</h2>";
-          let body = this.state.body;
-          body = body + prefix + suffix;
-          this.setState({body:body})
         }
         else if(newType === "p"){
           let prefix = "<p>";
           let suffix = "</p>";
-          let body = this.state.body;
-          body = body + prefix + suffix;
-          this.setState({body:body})
         }
         else if(newType === "quote"){
           let prefix = "<blockquote className=\"blockquote\">";
           let suffix = "</blockquote>";
-          let body = this.state.body;
-          body = body + prefix + suffix;
-          this.setState({body:body})
         }
         else if(newType === "imageCaption"){
           let prefix = "<span className=\"caption text-muted\">";
           let suffix = "</span>";
-          let body = this.state.body;
-          body = body + prefix + suffix;
-          this.setState({body:body})
         }
         else if(newType === "lineBreak"){
           let prefix = "<br>";
           let suffix = "</br>";
-          let body = this.state.body;
-          body = body + prefix + suffix;
-          this.setState({body:body})
         }
+
+        let po = this.state.postObject
+        let body = po.body;
+        body = body + prefix + suffix;
+        po.body = body;
+        this.setState({postObject:po})
 
       }
 
@@ -234,7 +226,7 @@ class Edit extends Component {
           alert("done")
           let prefix = "<img className=\"img-fluid\" src="+image_url+" alt=\"\">"
           let suffix = "</img>";
-          let body = this.state.body;
+          let body = this.state.postObject.body;
           body = body + prefix + suffix;
           this.setState({body:body})
 
@@ -249,7 +241,7 @@ class Edit extends Component {
       renderActionBar = () => {
 
             let mainImageButtonType = "btn btn-success btn-file";
-            if(this.state.selectedFile === null) mainImageButtonType = "btn btn-secondary btn-file";
+            if(this.state.postObject.selectedFile === null) mainImageButtonType = "btn btn-secondary btn-file";
 
 
             return(

@@ -112,7 +112,7 @@ class Post extends Component {
     var fromPost = this.state.postObject.date;
     var dateObject = new Date(Date.parse(fromPost));
     var year = dateObject.getFullYear();
-    var month = dateObject.getMonth();
+    var month = dateObject.getMonth() + 1;
     var day = dateObject.getDate();
     var dateReadable = day + "-" + month + "-" + year
 

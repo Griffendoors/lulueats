@@ -86,7 +86,9 @@ class Create extends Component {
             throw Error(obj.res.statusText);
           }
           else{
+            this.hideCreateWaitModal();
             this.props.history.push('/post/'+obj.body.id);
+
           }
 
         }).catch(function(error) {
@@ -121,7 +123,9 @@ class Create extends Component {
           throw Error(obj.res.statusText);
         }
         else{
+          this.hideCreateWaitModal();
           this.props.history.push('/post/'+obj.body.id);
+
         }
 
       }).catch(function(error) {
@@ -133,6 +137,10 @@ class Create extends Component {
 
   }
 
+  hideCreateWaitModal = () => {
+     document.getElementById("createWaitModal").close();
+
+  }
 
 
   addType = (newType) => {
@@ -217,7 +225,7 @@ class Create extends Component {
             <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
             <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
             <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
-            <button type = "button" className="btn btn-danger" onClick={this.createPostClicked}>Save Post</button>
+            <button type = "button" className="btn btn-danger"  data-toggle="modal" data-target="#createWaitModal" onClick={this.createPostClicked}>Save Post</button>
           </div>
         </div>
       </div>
@@ -231,9 +239,6 @@ class Create extends Component {
 
   // TODO : INSERT AT CURSOR POSITION
 
-  //TODO: CREATE  -  DONT LET CREATE WITHOUT ALL FIELDS,
-
-  // TODO : MAKE ALL HACKY STYLING LOOK BETTER IE BUTTONS
 
   //TODO HASHROUTER BACK TO BROWSER ROUTER - BUT BR BREAKS STYLE PATHS - SOMETHING TO DO WITH THIS.pROPS.PUSH
 
@@ -254,8 +259,6 @@ class Create extends Component {
 
   // TODO: Lock down client and server
 
-  // TODO: DONT ALLOW BLANK FILEDS ?
-
   // TODO: VALIDATE EVERYWHERE
 
   // TODO: OK OR ERROR - CHECK EVERYWHERE - SERVER TOO - DIFFERENT ACTIONS DIFFERENT STATUSES - IF RESPONSE IS BAD, STAY HERE
@@ -265,6 +268,16 @@ class Create extends Component {
     return (
 
       <div>
+        <div className="modal fade" id="createWaitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title" id="exampleModalLongTitle">Please Wait . . .</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+
 
         <div className="container">
           <div className="row">

@@ -29,7 +29,7 @@ const storage = cloudinaryStorage({
 cloudinary: cloudinary,
 folder: "lulueats",
 allowedFormats: ["jpg", "png"],
-transformation: [{ width: 500, height: 500, crop: "limit" }]
+//transformation: [{ width: 500, height: 500, crop: "limit" }]
 });
 const parser = multer({ storage: storage });
 
