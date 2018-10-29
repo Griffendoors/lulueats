@@ -126,7 +126,7 @@ class Contact extends Component {
 
     {this.renderNav()}
 
-          <header className="masthead" style={{"background-image": "url('img/bgContact.jpg')"}}>
+          <header className="masthead" style={{"backgroundImage": "url('img/bgContact.jpg')"}}>
             <div className="overlay"></div>
             <div className="container">
               <div className="row">

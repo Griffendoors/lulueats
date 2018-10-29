@@ -9,7 +9,7 @@ const knex = require('../db/knex');
 /* GET users listing. */
 router.get('/allPreviews', function(req, res, next) {
   knex('post')
-  .select('id','title', 'subTitle', 'author')
+  .select('id','title', 'subTitle', 'author','date')
   .orderBy('id', 'asc')
   .then(posts => {
     res.status(200);

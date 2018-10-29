@@ -90,19 +90,31 @@ class Home extends Component {
 
   }
 
+  getNiceDateTime(fromPost){
+    var dateObject = new Date(Date.parse(fromPost));
+    var year = dateObject.getFullYear();
+    var month = dateObject.getMonth() + 1;
+    var day = dateObject.getDate();
+    var dateReadable = day + "-" + month + "-" + year
+
+    return dateReadable; 
+  }
+
+
 
   renderPostPreviews(){
     const posts = this.state.posts;
     const subset = posts.slice(0,this.state.numberOfPostsToPreview);
 
-    const postComponents = subset.map((post) =>
+    const postComponents = subset.map((post,index) =>
 
 
       <div>
-      <PostPreview  id = {post.id}
+      <PostPreview  key = {this.index}
+                    id = {post.id}
                     title = {post.title}
                     subTitle = {post.subTitle}
-                    author = {"Posted by " + post.author}
+                    author = {"Posted by " + post.author + " on " + this.getNiceDateTime(post.date)}
                     isPrivate = {post.isPrivate}
                     selectPostPreview ={this.selectPostPreview}
       />
@@ -189,7 +201,6 @@ class Home extends Component {
   }
 
   renderShowMoreButton = () => {
-    console.log(this.state.posts.length);
     if(this.state.posts.length < 4) return null;
     else return <a className="btn btn-primary float-right" href = "javascript:;" onClick={this.showMorePosts} >Older Posts &rarr;</a>
 

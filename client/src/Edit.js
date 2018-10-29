@@ -43,6 +43,50 @@ class Edit extends Component {
     this.props.history.push('/home/');
   }
 
+  unprocessBody = (body) => {
+    let unprocessed = body;
+    unprocessed = unprocessed.replace(/<h2 className=\"section-heading\">/g, "<heading>");
+    unprocessed = unprocessed.replace(/<\/h2>/g, "<\/heading>");
+
+    unprocessed = unprocessed.replace(/<p>/g, "<paragraph>");
+    unprocessed = unprocessed.replace(/<\/p>/g, "</paragraph>");
+
+    unprocessed = unprocessed.replace(/<blockquote className=\"blockquote\">/g, "<quote>");
+    unprocessed = unprocessed.replace(/<\/blockquote>/g, "</quote>");
+
+    unprocessed = unprocessed.replace(/<span className=\"caption text-muted\">/g, "<caption>");
+    unprocessed = unprocessed.replace(/<\/span>/g, "</caption>");
+
+    unprocessed = unprocessed.replace(/<br>/g, "<linebreak>");
+    unprocessed = unprocessed.replace(/<\/br>/g, "</linebreak>");
+
+    return unprocessed;
+  }
+
+
+    processBody = (body) => {
+      let processed = body;
+      processed = processed.replace(/<heading>/g, "<h2 className=\"section-heading\">");
+      processed = processed.replace(/<\/heading>/g, "</h2>");
+
+      processed = processed.replace(/<paragraph>/g, "<p>");
+      processed = processed.replace(/<\/paragraph>/g, "</p>");
+
+      processed = processed.replace(/<quote>/g, "<blockquote className=\"blockquote\">");
+      processed = processed.replace(/<\/quote>/g, "</blockquote>");
+
+      processed = processed.replace(/<caption>/g, "<span className=\"caption text-muted\">");
+      processed = processed.replace(/<\/caption>/g, "</span>");
+
+      processed = processed.replace(/<linebreak>/g, "<br>");
+      processed = processed.replace(/<\/linebreak>/g, "</br>");
+
+
+      return processed;
+    }
+
+
+
 
 
   updatePostClicked = () => {
@@ -74,7 +118,7 @@ class Edit extends Component {
           title: this.state.title,
           subTitle: this.state.subTitle,
           author: this.state.author,
-          body: this.state.body,
+          body: this.processBody(this.state.body),
           banner_image_url: banner_image_url
         };
 
@@ -109,7 +153,7 @@ class Edit extends Component {
           title: this.state.title,
           subTitle: this.state.subTitle,
           author: this.state.author,
-          body: this.state.body,
+          body: this.processBody(this.state.body),
           banner_image_url: this.state.banner_image_url
         };
 
@@ -130,7 +174,7 @@ class Edit extends Component {
             throw Error(obj.res.statusText);
           }
           else{
-              this.hideUploadModal();
+            //  this.hideUploadModal();
             this.props.history.push('/post/'+obj.body.id);
           }
 
@@ -167,7 +211,7 @@ class Edit extends Component {
             title:obj.body.title,
             subTitle:obj.body.subTitle,
             author:obj.body.author,
-            body:obj.body.body,
+            body: this.unprocessBody(obj.body.body),
             banner_image_url:obj.body.banner_image_url,
 
           });
@@ -260,7 +304,7 @@ class Edit extends Component {
                   <div className="col-lg-12">
                     <span class={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
                     <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
-                <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
+                <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Paragraph</button>
                 <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
                 <span class="btn btn-success btn-file"  data-toggle="modal" data-target="#uploadModal">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
                 <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>

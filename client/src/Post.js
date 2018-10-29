@@ -239,12 +239,12 @@ class Post extends Component {
     else{
       return (
         <div>
-          <div className="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div className="modal fade" id="exampleModalCenter" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered" role="document">
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title" id="exampleModalLongTitle">Are you sure you want to delete this post?</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
@@ -257,7 +257,7 @@ class Post extends Component {
           </div>
 
           {this.renderNav()}
-          <header className="masthead" style={{"background-image": "url(\'"+this.state.postObject.banner_image_url+"\')"/*"url('../img/bgPost1.jpg')"*/}}>
+          <header className="masthead" style={{"backgroundImage": "url(\'"+this.state.postObject.banner_image_url+"\')"}}>
             <div className="overlay"></div>
             <div className="container">
               <div className="row">

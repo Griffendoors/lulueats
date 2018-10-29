@@ -12,10 +12,10 @@ class Create extends Component {
   constructor(props){
     super(props)
     this.state = {
-      title: null,
-      subTitle: null,
-      author: null,
-      selectedFile: null,
+      title: "",
+      subTitle: "",
+      author: "",
+      selectedFile: "",
       body: "",
 
     }
@@ -42,28 +42,50 @@ class Create extends Component {
     this.props.history.push('/home/');
   }
 
+  processBody = (body) => {
+    let processed = body;
+    processed = processed.replace(/<heading>/g, "<h2 className=\"section-heading\">");
+    processed = processed.replace(/<\/heading>/g, "</h2>");
+
+    processed = processed.replace(/<paragraph>/g, "<p>");
+    processed = processed.replace(/<\/paragraph>/g, "</p>");
+
+    processed = processed.replace(/<quote>/g, "<blockquote className=\"blockquote\">");
+    processed = processed.replace(/<\/quote>/g, "</blockquote>");
+
+    processed = processed.replace(/<caption>/g, "<span className=\"caption text-muted\">");
+    processed = processed.replace(/<\/caption>/g, "</span>");
+
+    processed = processed.replace(/<linebreak>/g, "<br>");
+    processed = processed.replace(/<\/linebreak>/g, "</br>");
+
+
+    return processed;
+  }
+
 
 
   createPostClicked = () => {
 
-    if(this.state.title === null){
+    if(this.state.title === ""){
       this.hideCreateWaitModal();
       return alert("Please enter Post Title");
     }
-    if(this.state.subTitle === null){
+    if(this.state.subTitle === ""){
       this.hideCreateWaitModal();
       return alert("Please enter Post Subtitle");
     }
 
 
-    if(this.state.selectedFile === null) {
+
+    if(this.state.selectedFile === "") {
       var r = window.confirm("Save post without banner image?");
       if (r !== true) return;
     }
 
     const formData = new FormData();
 
-    if(this.state.selectedFile !== null){
+    if(this.state.selectedFile !== ""){
       formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
       axios.post('/image/masthead', formData).then(response => {
         let banner_image_id = response.data.image_id;
@@ -73,7 +95,7 @@ class Create extends Component {
           title: this.state.title,
           subTitle: this.state.subTitle,
           author: this.state.author,
-          body: this.state.body,
+          body: this.processBody(this.state.body),
           banner_image_url: banner_image_url
         };
 
@@ -110,8 +132,8 @@ class Create extends Component {
         title: this.state.title,
         subTitle: this.state.subTitle,
         author: this.state.author,
-        body: this.state.body,
-        banner_image_url: null
+        body: this.processBody(this.state.body),
+        banner_image_url: ""
       };
 
       fetch('/posts/create',{
@@ -129,7 +151,7 @@ class Create extends Component {
           throw Error(obj.res.statusText);
         }
         else{
-          this.hideCreateWaitModal();
+          //this.hideCreateWaitModal();
           this.props.history.push('/post/'+obj.body.id);
 
         }
@@ -152,42 +174,35 @@ class Create extends Component {
   }
 
 
+
+
   addType = (newType) => {
+    let prefix, suffix;
     if(newType === "sectionHeading"){
-      let prefix = "<h2 className=\"section-heading\">";
-      let suffix = "</h2>";
-      let body = this.state.body;
-      body = body + prefix + suffix;
-      this.setState({body:body})
+      prefix = "<heading>";
+      suffix = "</heading>";
     }
     else if(newType === "p"){
-      let prefix = "<p>";
-      let suffix = "</p>";
-      let body = this.state.body;
-      body = body + prefix + suffix;
-      this.setState({body:body})
+      prefix = "<paragraph>";
+      suffix = "</paragraph>";
     }
     else if(newType === "quote"){
-      let prefix = "<blockquote className=\"blockquote\">";
-      let suffix = "</blockquote>";
-      let body = this.state.body;
-      body = body + prefix + suffix;
-      this.setState({body:body})
+      prefix = "<quote>";
+      suffix = "</quote>";
     }
     else if(newType === "imageCaption"){
-      let prefix = "<span className=\"caption text-muted\">";
-      let suffix = "</span>";
-      let body = this.state.body;
-      body = body + prefix + suffix;
-      this.setState({body:body})
+      prefix = "<caption>";
+      suffix = "</caption>";
     }
     else if(newType === "lineBreak"){
-      let prefix = "<br>";
-      let suffix = "</br>";
-      let body = this.state.body;
-      body = body + prefix + suffix;
-      this.setState({body:body})
+      prefix = "<linebreak>";
+      suffix = "</linebreak>";
     }
+    let body = this.state.body;
+    body = body + prefix + suffix;
+
+
+    this.setState({body:body})
 
   }
 
@@ -219,18 +234,18 @@ class Create extends Component {
   renderActionBar = () => {
 
     let mainImageButtonType = "btn btn-success btn-file";
-    if(this.state.selectedFile === null) mainImageButtonType = "btn btn-secondary btn-file";
+    if(this.state.selectedFile === "") mainImageButtonType = "btn btn-secondary btn-file";
 
 
     return(
       <div>
         <div className="row">
           <div className="col-lg-12">
-            <span class={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
+            <span className={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
             <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
-            <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
+            <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Paragraph</button>
             <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
-            <span class="btn btn-success btn-file"  data-toggle="modal" data-target="#uploadModal">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
+            <span className="btn btn-success btn-file"  data-toggle="modal" data-target="#uploadModal">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
             <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
             <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
             <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
@@ -241,7 +256,15 @@ class Create extends Component {
     );
   }
 
-  // TODO : EDIT NOT WORKING
+  // TODO : DRY - REFRACTOR OG CODE IE NAV
+
+  //TODO : CONSOLE ERRORS
+
+  //TODO : WHEN REPLACING IMG TAGS FOR USER, USER AN INDEX POINTER IE IMAGE = 0, store image 0 in state, if on push to server isnt used, delete
+
+  // TODO : create without banner - not hiding MODAL
+
+  // TODO : LOAD ONLY WHAT NEEDED - PREVIEWS AVAILABLE , MORE PREVIEWS, POST CURRENTLY LOOKING AT
 
   //TODO : IMAGE SIZE GOOD FOR MOBILE AND WIDE - MASTHEAD
 
@@ -250,8 +273,6 @@ class Create extends Component {
   //TODO: DELETE ALSO DELETES CLOUDINARY IMAGES (INLINE AND MAIN)
 
   //TODO: EDIT PAGE : SHOW IMAGES
-
-  // TODO : MODAL HIDE ALL FUCKED UP
 
   //TODO : CALLING A NULL API SOMEWHERE
 
@@ -291,7 +312,7 @@ class Create extends Component {
     return (
 
       <div>
-        <div className="modal fade" id="createWaitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div className="modal fade" id="createWaitModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
@@ -301,7 +322,7 @@ class Create extends Component {
           </div>
         </div>
 
-        <div className="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div className="modal fade" id="uploadModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
               <div className="modal-header">
