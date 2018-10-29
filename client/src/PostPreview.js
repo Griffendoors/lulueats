@@ -27,7 +27,7 @@ class PostPreview extends Component {
           </h3>
         </a>
         <p className="post-meta">
-          Posted by {this.props.author}
+           {this.props.author}
         </p>
       </div>
       </LinkContainer>

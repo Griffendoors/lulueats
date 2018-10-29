@@ -45,80 +45,236 @@ class Edit extends Component {
   }
 
   fileChangedHandler = (event) => {
-    this.setState({selectedFile: event.target.files[0]})
+    var postObject = this.state.postObject;
+    postObject.selectedFile =  event.target.files[0]
+    this.setState({postObject: postObject})
+  }
+
+  cancelClicked = () => {
+    this.props.history.push('/home/');
   }
 
 
 
   updatePostClicked = () => {
 
+    if(this.state.postObject.title === null) return alert("Please enter Post Title");
+    if(this.state.postObject.subTitle === null) return alert("Please enter Post Subtitle");
 
 
-    var id = this.state.postObject.id;
+    if(this.state.postObject.selectedFile === null) {
+      var r = window.confirm("Save post without banner image?");
+      if (r !== true) return;
+    }
 
-    fetch('/posts/'+id+'/edit',{
-      method: "PUT",
-      headers: {
-        "Accept": "application/json",
-        "Content-Type": "application/json"
+    const formData = new FormData();
 
-      },
-      body: JSON.stringify(this.state.postObject),
-    }).then(r =>  r.json().then(data => ({res: r, body: data})))
+    if(this.state.selectedFile !== null){
+      formData.append('image', this.state.postObject.selectedFile, this.state.postObject.selectedFile.name);
+      axios.post('/image/masthead', formData).then(response => {
+        let banner_image_id = response.data.image_id;
+        let banner_image_url = response.data.image_url;
+
+        var postObject = {
+          title: this.state.postObject.title,
+          subTitle: this.state.postObject.subTitle,
+          author: this.state.postObject.author,
+          body: this.state.postObject.body,
+          banner_image_url: banner_image_url
+        };
+
+        var id = this.state.postObject.id;
+
+        fetch('/posts/'+id+'/edit',{
+          method: "PUT",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+
+          },
+          body: JSON.stringify(postObject),
+        }).then(r =>  r.json().then(data => ({res: r, body: data})))
+        .then(obj => {
+          if(!obj.res.ok){
+            alert("Something went wrong!");
+            throw Error(obj.res.statusText);
+          }
+          else{
+            this.props.history.push('/post/'+obj.body.id);
+          }
+
+        }).catch(function(error) {
+          console.log(error);
+        });
+  });
+      }
+      else {
+        var postObject = {
+          title: this.state.postObject.title,
+          subTitle: this.state.spostObject.ubTitle,
+          author: this.state.postObject.author,
+          body: this.state.postObject.body,
+          banner_image_url: null
+        };
+
+        var id = this.state.postObject.id;
+
+        fetch('/posts/'+id+'/edit',{
+          method: "PUT",
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json"
+
+          },
+          body: JSON.stringify(postObject),
+        }).then(r =>  r.json().then(data => ({res: r, body: data})))
+        .then(obj => {
+          if(!obj.res.ok){
+            alert("Something went wrong!");
+            throw Error(obj.res.statusText);
+          }
+          else{
+            this.props.history.push('/post/'+obj.body.id);
+          }
+
+        }).catch(function(error) {
+          console.log(error);
+        });
+
+
+      }
+
+
+    }
+
+
+
+    componentDidMount = () => {
+
+      var id = this.state.postObject.id;
+
+      fetch('/posts/'+id,{
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json"
+        },
+      })
+      .then(r =>  r.json().then(data => ({res: r, body: data})))
       .then(obj => {
         if(!obj.res.ok){
           alert("Something went wrong!");
           throw Error(obj.res.statusText);
         }
         else{
-          this.props.history.push('/post/'+obj.body.id);
+          var postObject = obj.body;
+          this.setState({postObject:postObject});
         }
 
-      }).catch(function(error) {
-          console.log(error);
-      });
-
-
-
-
-  }
-
-
-
-  componentDidMount = () => {
-
-    var id = this.state.postObject.id;
-
-    fetch('/posts/'+id,{
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json"
-      },
-    })
-    .then(r =>  r.json().then(data => ({res: r, body: data})))
-    .then(obj => {
-      if(!obj.res.ok){
-        alert("Something went wrong!");
-        throw Error(obj.res.statusText);
-      }
-      else{
-        var postObject = obj.body;
-        this.setState({postObject:postObject});
-      }
-
-    }).then(() => {
+      }).then(() => {
         this.setState({loading: false});
       })
       .catch(function(error) {
-         console.log(error);
-    });
+        console.log(error);
+      });
 
-  }
+    }
 
 
-  render() {
+
+
+      addType = (newType) => {
+        if(newType === "sectionHeading"){
+          let prefix = "<h2 className=\"section-heading\">";
+          let suffix = "</h2>";
+          let body = this.state.body;
+          body = body + prefix + suffix;
+          this.setState({body:body})
+        }
+        else if(newType === "p"){
+          let prefix = "<p>";
+          let suffix = "</p>";
+          let body = this.state.body;
+          body = body + prefix + suffix;
+          this.setState({body:body})
+        }
+        else if(newType === "quote"){
+          let prefix = "<blockquote className=\"blockquote\">";
+          let suffix = "</blockquote>";
+          let body = this.state.body;
+          body = body + prefix + suffix;
+          this.setState({body:body})
+        }
+        else if(newType === "imageCaption"){
+          let prefix = "<span className=\"caption text-muted\">";
+          let suffix = "</span>";
+          let body = this.state.body;
+          body = body + prefix + suffix;
+          this.setState({body:body})
+        }
+        else if(newType === "lineBreak"){
+          let prefix = "<br>";
+          let suffix = "</br>";
+          let body = this.state.body;
+          body = body + prefix + suffix;
+          this.setState({body:body})
+        }
+
+      }
+
+
+
+
+      addInlineImage = (event) => {
+        let imageFile = event.target.files[0];
+        const formData = new FormData();
+        formData.append('image', imageFile, imageFile.name);
+        axios.post('/image/inline', formData).then(response => {
+          let image_url = response.data.image_url;
+
+          alert("done")
+          let prefix = "<img className=\"img-fluid\" src="+image_url+" alt=\"\">"
+          let suffix = "</img>";
+          let body = this.state.body;
+          body = body + prefix + suffix;
+          this.setState({body:body})
+
+        });
+
+      }
+
+
+
+
+
+      renderActionBar = () => {
+
+            let mainImageButtonType = "btn btn-success btn-file";
+            if(this.state.selectedFile === null) mainImageButtonType = "btn btn-secondary btn-file";
+
+
+            return(
+              <div>
+                <div className="row">
+                  <div className="col-lg-12">
+                    <span class={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
+                    <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
+                <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
+                <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
+                <span class="btn btn-success btn-file">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
+                <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
+                <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
+                <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
+                <button type = "button" className="btn btn-danger" onClick={this.updatePostClicked}>Edit Post</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+
+    render() {
       return (
-      <div>
+        <div>
 
           <div className="container">
             <div className="row">
@@ -155,11 +311,8 @@ class Edit extends Component {
                   </div>
 
 
-                  <br></br>
-                  <div id="success"></div>
-                  <div className="form-group">
-                    <button type="button" className="btn btn-primary"  onClick={this.updatePostClicked} id="updatePostButton">Update</button>
-                  </div>
+                    {this.renderActionBar()}
+
                 </form>
               </div>
             </div>
@@ -170,11 +323,11 @@ class Edit extends Component {
 
 
 
-      </div>
+        </div>
 
 
-    );
+      );
+    }
   }
-}
 
-export default Edit;
+  export default Edit;

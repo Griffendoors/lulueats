@@ -13,7 +13,7 @@ class Create extends Component {
     super(props)
     this.state = {
       title: null,
-      subtTitle: null,
+      subTitle: null,
       author: null,
       selectedFile: null,
       body: "",
@@ -38,9 +38,17 @@ class Create extends Component {
     this.setState({selectedFile: event.target.files[0]})
   }
 
+  cancelClicked = () => {
+    this.props.history.push('/home/');
+  }
+
 
 
   createPostClicked = () => {
+
+    if(this.state.title === null) return alert("Please enter Post Title");
+    if(this.state.subTitle === null) return alert("Please enter Post Subtitle");
+
 
     if(this.state.selectedFile === null) {
       var r = window.confirm("Save post without banner image?");
@@ -156,7 +164,7 @@ class Create extends Component {
       body = body + prefix + suffix;
       this.setState({body:body})
     }
-    else if(newType === "lineBrea,"){
+    else if(newType === "lineBreak"){
       let prefix = "<br>";
       let suffix = "</br>";
       let body = this.state.body;
@@ -193,24 +201,33 @@ class Create extends Component {
 
   renderActionBar = () => {
 
+    let mainImageButtonType = "btn btn-success btn-file";
+    if(this.state.selectedFile === null) mainImageButtonType = "btn btn-secondary btn-file";
+
 
     return(
       <div>
-      <div className="row">
-      <div className="col-lg-12">
-      <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
-      <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
-      <button type="button" className="btn btn-primary" onClick={() => this.addType("quote")}>Quote</button>
-      <button type="button" className="btn btn-primary" onClick={() => this.addInlineImage()}>Image</button>
-      <button type="button" className="btn btn-primary" onClick={() => this.addType("imageCaption")}>Image Caption</button>
-      <button type="button" className="btn btn-primary" onClick={() => this.addType("BREAK")}>Line Break</button>
-      <input type="file" onChange={this.addInlineImage}></input>
-
-      </div>
-      </div>
+        <div className="row">
+          <div className="col-lg-12">
+            <span class={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
+            <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
+            <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Body</button>
+            <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
+            <span class="btn btn-success btn-file">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
+            <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
+            <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
+            <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
+            <button type = "button" className="btn btn-danger" onClick={this.createPostClicked}>Save Post</button>
+          </div>
+        </div>
       </div>
     );
   }
+
+  // TODO: BANNER IMAGE RES BAD AND DONT SEE ALL ON MOBILE
+
+  // TODO: SOMETHING HAS PREVENTED TEXT-ALIGN CENTRE STYLE
+
 
   // TODO : INSERT AT CURSOR POSITION
 
@@ -244,93 +261,57 @@ class Create extends Component {
   // TODO: OK OR ERROR - CHECK EVERYWHERE - SERVER TOO - DIFFERENT ACTIONS DIFFERENT STATUSES - IF RESPONSE IS BAD, STAY HERE
 
 
-  renderNav(){
-    return(
-      <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-      <div className="container">
-      <a className="navbar-brand" >Lulu Caitcheon</a>
-      <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-      Menu
-      <i className="fa fa-bars"></i>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarResponsive">
-      <ul className="navbar-nav ml-auto">
-      <li className="nav-item">
-      <LinkContainer to="/">
-      <a className="nav-link">Home</a>
-      </LinkContainer>
-      </li>
-      </ul>
-      </div>
-      </div>
-      </nav>
-    );
-
-  }
-
-
-
-
   render() {
-
-
-
     return (
-
 
       <div>
 
-      <div className="container">
-      <div className="row">
-      <div className="col-lg-8 col-md-10 mx-auto">
-
-      <input type="file" onChange={this.fileChangedHandler}></input>
-
-      <form name="sentMessage" id="contactForm" noValidate>
-
-      <div className="control-group">
-      <div className="form-group floating-label-form-group controls">
-      <label>Title</label>
-      <input type="text" className="form-control" placeholder="Title" id="title" required data-validation-required-message="Please enter post title." value={this.state.title} onChange={this.handleTitleChange}></input>
-      <p className="help-block text-danger"></p>
-      </div>
-      </div>
-      <div className="control-group">
-      <div className="form-group floating-label-form-group controls">
-      <label>Author</label>
-      <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" required data-validation-required-message="Please enter the author of this post." value={this.state.author} onChange={this.handleAuthorChange}></input>
-      <p className="help-block text-danger"></p>
-      </div>
-      </div>
-      <div className="control-group">
-      <div className="form-group col-xs-12 floating-label-form-group controls">
-      <label>SubTitle</label>
-      <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
-      <p className="help-block text-danger"></p>
-      </div>
-      </div>
-      <div className="control-group">
-      <div className="form-group floating-label-form-group controls">
-      <label>Body</label>
-      <textarea rows="14" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
-      <p className="help-block text-danger"></p>
-      {this.renderActionBar()}
-      </div>
-      </div>
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-8 col-md-10 mx-auto">
 
 
+              <form name="sentMessage" id="contactForm" noValidate>
 
-      <br></br>
-      <div id="success"></div>
-      <div className="form-group">
-      <button type = "button" className="btn btn-primary" onClick={this.createPostClicked}>Create</button>
-      </div>
-      </form>
-      </div>
-      </div>
-      </div>
+                <div className="control-group">
+                  <div className="form-group floating-label-form-group controls">
+                    <label>Title</label>
+                    <input type="text" className="form-control" placeholder="Title" id="title" required data-validation-required-message="Please enter post title." value={this.state.title} onChange={this.handleTitleChange}></input>
+                    <p className="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div className="control-group">
+                  <div className="form-group floating-label-form-group controls">
+                    <label>Author</label>
+                    <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" required data-validation-required-message="Please enter the author of this post." value={this.state.author} onChange={this.handleAuthorChange}></input>
+                    <p className="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div className="control-group">
+                  <div className="form-group col-xs-12 floating-label-form-group controls">
+                    <label>SubTitle</label>
+                    <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
+                    <p className="help-block text-danger"></p>
+                  </div>
+                </div>
+                <div className="control-group">
+                  <div className="form-group floating-label-form-group controls">
+                    <label>Body</label>
+                    <textarea rows="14" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
+                    <p className="help-block text-danger"></p>
 
-      <hr></hr>
+                  </div>
+                </div>
+
+                              {this.renderActionBar()}
+
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <hr></hr>
 
       </div>
 
