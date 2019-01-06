@@ -1,0 +1,47 @@
+TODO
+RELEASE
+- takes fucking ages to load initially
+- User db instead of hardcode
+- All css, js files
+- to lower case, trim
+- resize mast head on mobile - dont worry about vertical
+- console errors
+- load only what needed, previews availavble, more previews, post currently looking at.
+
+
+EXTRA
+- learn from albert- check his practices in portal
+- remove alerts - use plan for portal ie highlight red
+- someone trying to contact lulu, make sure they get feedback on form submit
+- register service worker and manifest.json
+- publish button. related to isPrivate. autosave drafts (after timer?) and at end. default to private.
+- check .env file vs heroky config vars.
+- set up seperate branches for dev/prod hiding/using keys for local/git/heroku
+- Make sure images on cloudinary, and all blog posts exactly reflect what is on site - everything gets deleted, edited as should.
+- remove unused dependencies
+- show main image on edit?
+- insert at cursor position
+- hashrouter back to browser router - br breaks style paths, something to do with this.props.push
+- click post preiew, grab data based on that id
+- error on bad post creation
+- lock down server
+- client and server validation
+- ok or error, correct statuses, if response is bad, stay here.
+- reflect all edits/deletes in db/cloudinary.
+- edit post - dont do another server call, just pass info from here.
+- refresh tokens
+- try catch on all ops, return something useful, dont crash whole app.
+- Make sure not all bootstrap components are being loaded by client, just what needs.
+- Do cloudinary lulu gmail account
+- cant upload repeated inline image
+- image sizes being changed on uplaod
+- landscape inline images look fine on mobile .. ?
+- better loading screen for posting wait
+- carrying apt info over incase edit needs it
+- if images are removed in edit, how to remove them from db + cloudinary
+- c/s checks for post content so s doesnt crash ie not nullable
+- editing banner image
+- figure out the slow stuff before using lazy etc.
+- drop all from dev/prod - reset ids.
+- change edit to use originalname not url (will need to do another db query)
+- does cloudinary and database reflect the actual state of the apps content? ie what posts there are / edited and deleted.

@@ -3,7 +3,6 @@ var router = express.Router();
 
 const knex = require('../db/knex');
 
-//TODO SECURE THESE AND ALL APIS/RESOURCES WITH TOKEN CHECK
 
 
 /* GET users listing. */
@@ -56,7 +55,7 @@ function insertOrUpdate(req,res,callback){
         var body = postObject.body;
         var banner_image_url = null;
         if(postObject.banner_image_url !== null) banner_image_url = postObject.banner_image_url;
-        if(author === null) author = "Lulu Caitcheon";
+        if(author === "") author = "Lulu Caitcheon";
 
         const post = {
           title: title,
@@ -85,6 +84,7 @@ function validPost(post){
 router.post('/create', function(req,res,next){
   insertOrUpdate(req,res, (post) =>{
     post.date = new Date();
+
     knex('post')
       .insert(post, 'id')
       .then(ids => {
@@ -118,24 +118,7 @@ router.put('/:id/edit',function(req,res,next){
 });
 
 
-  //TODO CHECK IF AUTHOR IS null
 
-  //TODO INPUT VALIDATION / CHECKS AT ALL STEPS
-
-  // TODO RES CODES. ERROR HANDLING. NEVER LOSE POST. TRY NOT TO LET USER BREAK - ALL THAT SHIT.
-
-  // TODO - will be having private field on post
-
-
-  // TODO - action confirmation to user - ie post created - 'sorry error' or 'success' - return to home screen
-
-  // TODO - create post - cancel or draft?
-
-  // TODO - post validation ie title cannot be empty
-
-  // TODO: ROUTes order, when called etc. check can access, and not when shouldnt
-
-  // TODO: VALIDATE EVERYTHING EVERYWHERE ESPECIALLY ON SERVER IN ROUTE WHEN DOING SOMETHING
 
 
 

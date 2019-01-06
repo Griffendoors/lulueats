@@ -3,7 +3,9 @@ import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 
-
+import NavBar from './components/NavBar';
+import Footer from './components/Footer';
+import Header from './components/Header';
 
 
 
@@ -13,7 +15,10 @@ class Contact extends Component {
     super(props);
     this.state = {
       posts: [],
-      authorized: false
+      authorized: false,
+      nameInput: "",
+      emailInput: "",
+      messageInput: ""
     }
 
   }
@@ -42,170 +47,130 @@ class Contact extends Component {
       else this.setState({authorized:true});
 
     }).catch(function(error) {
-        console.log(error);
+      console.log(error);
     });
   }
 
-  renderNav(){
-    if(this.state.authorized){
-      return(
-        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-          <div className="container">
-            <a className="navbar-brand" >Lulu Caitcheon</a>
-            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              Menu
-              <i className="fa fa-bars"></i>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarResponsive">
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                <LinkContainer to="/">
-                  <a className="nav-link">Home</a>
-                </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/about">
-                    <a className="nav-link">About</a>
-                  </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/contact">
-                    <a className="nav-link">Contact</a>
-                  </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/create">
-                    <a className="nav-link">Create</a>
-                  </LinkContainer>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      );
-    }
-    else{
-      return(
-        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-          <div className="container">
-            <a className="navbar-brand" >Lulu Caitcheon</a>
-            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              Menu
-              <i className="fa fa-bars"></i>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarResponsive">
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                <LinkContainer to="/">
-                  <a className="nav-link">Home</a>
-                </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/about">
-                    <a className="nav-link">About</a>
-                  </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/contact">
-                    <a className="nav-link">Contact</a>
-                  </LinkContainer>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      );
-    }
+  validateMessage = (senderName,senderEmail,senderMessage) =>{
+    if(senderName === null || senderEmail === null || senderMessage === null) return false;
+    if(senderName === undefined || senderEmail === undefined || senderMessage === undefined) return false;
+    if(senderName.length === 0 || senderEmail.length === 0 || senderMessage.length === 0 ) return false;
+
+
+    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(senderEmail).toLowerCase());
   }
+
+  sendMessage = () => {
+    let name = this.state.nameInput;
+    let email = this.state.emailInput;
+    let message = this.state.messageInput;
+
+
+    if(!this.validateMessage(name,email,message)) return alert("Please complete form")
+
+
+    let postObject = {
+      name: name,
+      email: email,
+      message: message
+    }
+
+    fetch('/contact/send',{
+      method: "POST",
+      headers: {
+        "Accept": "application/json",
+        "Content-Type": "application/json"
+
+      },
+      body: JSON.stringify(postObject),
+    }).then(r =>  r.json().then(data => ({res: r, body: data})))
+    .then(obj => {
+      console.log(obj);
+      if(!obj.res.ok){
+        alert("Something went wrong!");
+        throw Error(obj.res.statusText);
+      }
+      else{
+        alert("Message delivered!");
+        this.setState({nameInput: "", emailInput: "", messageInput: ""});
+
+      }
+
+    }).catch(function(error) {
+      console.log(error);
+    });
+
+
+
+
+
+  }
+
+  handleNameInputChange = (e) => {
+    this.setState({nameInput: e.target.value});
+  }
+
+  handleEmailInputChange = (e) => {
+    this.setState({emailInput: e.target.value});
+  }
+
+  handleMessageInputChange = (e) => {
+    this.setState({messageInput: e.target.value});
+  }
+
 
   render() {
     return (
 
 
-  <div>
+      <div>
 
-    {this.renderNav()}
+        <NavBar authorized = {this.state.authorized} />
 
-          <header className="masthead" style={{"backgroundImage": "url('img/bgContact.jpg')"}}>
-            <div className="overlay"></div>
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-8 col-md-10 mx-auto">
-                  <div className="page-heading">
-                    <h1>Contact Me</h1>
-                    <span className="subheading">Berry cool.</span>
+        <Header bgImage = {'img/bgContact.jpg'} h1 = {"Contact Me"} subheading = {"I would love to hear from you"} />
+
+
+
+        <div className="container">
+          <div className="row">
+            <div className="col-lg-8 col-md-10 mx-auto">
+              <p>Want to get in touch? Fill out the form below to send me a message and I will get back to you as soon as possible!</p>
+              <form name="sentMessage" id="contactForm" noValidate>
+                <div className="control-group">
+                  <div className="form-group floating-label-form-group controls">
+                    <label>Name</label>
+                    <input type="text" className="form-control" placeholder="Name" id="name" value={this.state.nameInput} onChange={this.handleNameInputChange}></input>
+                    <p className="help-block text-danger"></p>
                   </div>
                 </div>
-              </div>
-            </div>
-          </header>
-
-
-          <div className="container">
-            <div className="row">
-              <div className="col-lg-8 col-md-10 mx-auto">
-                <p>Want to get in touch? Fill out the form below to send me a message and I will get back to you as soon as possible!</p>
-                <form name="sentMessage" id="contactForm" noValidate>
-                  <div className="control-group">
-                    <div className="form-group floating-label-form-group controls">
-                      <label>Name</label>
-                      <input type="text" className="form-control" placeholder="Name" id="name" required data-validation-required-message="Please enter your name."></input>
-                      <p className="help-block text-danger"></p>
-                    </div>
+                <div className="control-group">
+                  <div className="form-group floating-label-form-group controls">
+                    <label>Email Address</label>
+                    <input type="email" className="form-control" placeholder="Email Address" id="email"  value={this.state.emailInput} onChange={this.handleEmailInputChange}></input>
+                    <p className="help-block text-danger"></p>
                   </div>
-                  <div className="control-group">
-                    <div className="form-group floating-label-form-group controls">
-                      <label>Email Address</label>
-                      <input type="email" className="form-control" placeholder="Email Address" id="email" required data-validation-required-message="Please enter your email address."></input>
-                      <p className="help-block text-danger"></p>
-                    </div>
+                </div>
+                <div className="control-group">
+                  <div className="form-group floating-label-form-group controls">
+                    <label>Message</label>
+                    <textarea rows="5" className="form-control" placeholder="Message" id="message"  value={this.state.messageInput} onChange={this.handleMessageInputChange}></textarea>
+                    <p className="help-block text-danger"></p>
                   </div>
-                  <div className="control-group">
-                    <div className="form-group col-xs-12 floating-label-form-group controls">
-                      <label>Phone Number</label>
-                      <input type="tel" className="form-control" placeholder="Phone Number" id="phone" required data-validation-required-message="Please enter your phone number."></input>
-                      <p className="help-block text-danger"></p>
-                    </div>
-                  </div>
-                  <div className="control-group">
-                    <div className="form-group floating-label-form-group controls">
-                      <label>Message</label>
-                      <textarea rows="5" className="form-control" placeholder="Message" id="message" required data-validation-required-message="Please enter a message."></textarea>
-                      <p className="help-block text-danger"></p>
-                    </div>
-                  </div>
-                  <br></br>
-                  <div id="success"></div>
-                  <div className="form-group">
-                    <button type="submit" className="btn btn-primary" id="sendMessageButton">Send</button>
-                  </div>
-                </form>
-              </div>
+                </div>
+                <br></br>
+                <div id="success"></div>
+                <div className="form-group">
+                  <button className="btn btn-primary" id="sendMessageButton" onClick = {this.sendMessage}>Send</button>
+                </div>
+              </form>
             </div>
           </div>
+        </div>
 
-          <hr></hr>
+        <hr></hr>
 
-          <footer>
-            <div className="container">
-              <div className="row">
-                <div className="col-lg-8 col-md-10 mx-auto">
-                  <ul className="list-inline text-center">
-                    <li className="list-inline-item">
-                      <a href="https://www.instagram.com/itsjustlulu_/">
-                        <span className="fa-stack fa-lg">
-                          <i className="fa fa-circle fa-stack-2x"></i>
-                          <i className="fa fa-instagram fa-stack-1x fa-inverse"></i>
-                        </span>
-                      </a>
-                    </li>
-                  </ul>
-                  <p className="copyright text-muted">Copyright &copy; GWA 2018</p>
-                  <p className="copyright text-muted">Theme from Blackrock Digital</p>
-                </div>
-              </div>
-            </div>
-          </footer>
+        <Footer/>
       </div>
 
 

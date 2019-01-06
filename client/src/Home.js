@@ -3,6 +3,9 @@ import { Route } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Link } from 'react-router-bootstrap';
 
+import NavBar from './components/NavBar';
+import Footer from './components/Footer';
+import Header from './components/Header';
 import PostPreview from'./PostPreview.js';
 
 class Home extends Component {
@@ -43,7 +46,7 @@ class Home extends Component {
       else this.setState({authorized:true});
 
     }).catch(function(error) {
-        console.log(error);
+      console.log(error);
     });
   }
 
@@ -68,27 +71,17 @@ class Home extends Component {
       }
 
     }).catch(function(error) {
-        console.log(error);
+      console.log(error);
     });
 
 
   }
-
-
-// TODO: EDIT - BANNER IMAGE CHANGE
-// TODO DELETE - REFLECT ALL EDITS / DELETS in DB
-
 
   showMorePosts = () => {
     var extendedNumberOfPostsToPreview = this.state.extendedNumberOfPostsToPreview;
     this.setState({numberOfPostsToPreview:extendedNumberOfPostsToPreview});
   }
 
-  selectPostPreview = (id) => {
-    var post = this.getPostByID(id);
-
-
-  }
 
   getNiceDateTime(fromPost){
     var dateObject = new Date(Date.parse(fromPost));
@@ -109,167 +102,56 @@ class Home extends Component {
     const postComponents = subset.map((post,index) =>
 
 
-      <div>
+    <div>
       <PostPreview  key = {this.index}
-                    id = {post.id}
-                    title = {post.title}
-                    subTitle = {post.subTitle}
-                    author = {"Posted by " + post.author + " on " + this.getNiceDateTime(post.date)}
-                    isPrivate = {post.isPrivate}
-                    selectPostPreview ={this.selectPostPreview}
-      />
+        id = {post.id}
+        title = {post.title}
+        subTitle = {post.subTitle}
+        author = {"Posted by " + post.author + " on " + this.getNiceDateTime(post.date)}
+        isPrivate = {post.isPrivate}
+        />
       <hr></hr>
-      </div>
-    );
-    return postComponents;
-  }
+    </div>
+  );
+  return postComponents;
+}
 
 
-  renderNav(){
+renderShowMoreButton = () => {
+  if(this.state.posts.length < 4) return null;
+  else return <a className="btn btn-primary float-right" href = "javascript:;" onClick={this.showMorePosts} >Older Posts &rarr;</a>
 
-    var authorized = this.state.authorized;
+}
 
-    if(authorized){
-      return(
-        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-          <div className="container">
-            <a className="navbar-brand"  >Lulu Caitcheon</a>
-            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              Menu
-              <i className="fa fa-bars"></i>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarResponsive">
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                <LinkContainer to="/">
-                  <a className="nav-link">Home</a>
-                </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/about">
-                    <a className="nav-link">About</a>
-                  </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/contact">
-                    <a className="nav-link">Contact</a>
-                  </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/create">
-                    <a className="nav-link">Create</a>
-                  </LinkContainer>
-                </li>
-              </ul>
+render() {
+  return (
+    <div>
+
+      <NavBar authorized = {this.state.authorized} />
+
+      <Header bgImage = {'img/bgHome.jpeg'} h1 = {"Lulu Eats"} subheading = {"Food and Travel"} />
+
+      <div className="container">
+        <div className="row">
+          <div className="col-lg-8 col-md-10 mx-auto">
+
+            {this.renderPostPreviews()}
+
+            <div className="clearfix">
+              {this.renderShowMoreButton()}
             </div>
           </div>
-        </nav>
-      );
-    }
-    else{
-      return(
-        <nav className="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-          <div className="container">
-            <a className="navbar-brand" >Lulu Caitcheon</a>
-            <button className="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-              Menu
-              <i className="fa fa-bars"></i>
-            </button>
-            <div className="collapse navbar-collapse" id="navbarResponsive">
-              <ul className="navbar-nav ml-auto">
-                <li className="nav-item">
-                <LinkContainer to="/">
-                  <a className="nav-link">Home</a>
-                </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/about">
-                    <a className="nav-link">About</a>
-                  </LinkContainer>
-                </li>
-                <li className="nav-item">
-                  <LinkContainer to="/contact">
-                    <a className="nav-link">Contact</a>
-                  </LinkContainer>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-      );
-    }
-  }
-
-  renderShowMoreButton = () => {
-    if(this.state.posts.length < 4) return null;
-    else return <a className="btn btn-primary float-right" href = "javascript:;" onClick={this.showMorePosts} >Older Posts &rarr;</a>
-
-  }
-
-  render() {
-    return (
-  <div>
-
-    {this.renderNav()}
-
-
-
-  <header className="masthead" style={{"backgroundImage": "url('img/bgHome.jpeg')"}}>
-    <div className="overlay"></div>
-    <div className="container">
-      <div className="row">
-        <div className="col-lg-8 col-md-10 mx-auto">
-          <div className="site-heading">
-            <h1>Lulu Eats</h1>
-            <span className="subheading">Food and travel</span>
-          </div>
         </div>
       </div>
+
+      <hr></hr>
+
+      <Footer/>
+
     </div>
-  </header>
+  );
+}
 
-  <div className="container">
-    <div className="row">
-      <div className="col-lg-8 col-md-10 mx-auto">
+}
 
-
-        {this.renderPostPreviews()}
-
-        <div className="clearfix">
-        {this.renderShowMoreButton()}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <hr></hr>
-
-
-  <footer>
-    <div className="container">
-      <div className="row">
-        <div className="col-lg-8 col-md-10 mx-auto">
-          <ul className="list-inline text-center">
-            <li className="list-inline-item">
-              <a href="https://www.instagram.com/itsjustlulu_/">
-                <span className="fa-stack fa-lg">
-                  <i className="fa fa-circle fa-stack-2x"></i>
-                  <i className="fa fa-instagram fa-stack-1x fa-inverse"></i>
-                </span>
-              </a>
-            </li>
-          </ul>
-          <p className="copyright text-muted">Copyright &copy; GWA 2018</p>
-          <p className="copyright text-muted">Theme from Blackrock Digital</p>
-        </div>
-      </div>
-    </div>
-  </footer>
-  </div>
-
-      );
-    }
-
-  }
-
-  export default Home;
+export default Home;

@@ -13,12 +13,13 @@ class Edit extends Component {
     super(props)
     this.state = {
         id: this.props.match.params.id,
-        title: null,
-        subTitle: null,
-        author: null,
-        body: null,
-        selectedFile: null,
-        banner_image_url: null
+        title: "",
+        subTitle: "",
+        author: "",
+        mainImageFile: "",
+        body: "",
+        inlineImages: [],
+        loading: false,
     }
   }
 
@@ -35,8 +36,8 @@ class Edit extends Component {
     this.setState({body: e.target.value});
   }
 
-  fileChangedHandler = (event) => {
-    this.setState({selectedFile: event.target.files[0]})
+  mainImageFileChangedHandler = (event) => {
+    this.setState({mainImageFile: event.target.files[0]})
   }
 
   cancelClicked = () => {
@@ -85,42 +86,92 @@ class Edit extends Component {
       return processed;
     }
 
+    sendInlines = () => {
+      return new Promise((resolve, reject) => {
 
+        let uploaded = [];
+        let removed = [];
+
+        const uploaders = this.state.inlineImages.map(image => {
+          if(!this.state.body.includes(image.name)){
+            removed.push(image);
+            return;
+          }
+          const formData = new FormData();
+          formData.append('image', image, image.name);
+
+          return axios.post('/image', formData, {
+          }).then(response => {
+            uploaded.push({image_url:response.data.image_url,name: image.name});
+          })
+
+        });
+
+        axios.all(uploaders)
+        .then(() => {
+          this.setState({
+            inlineImages: this.state.inlineImages.filter((e) => { return !removed.includes(e); })
+          });
+        })
+        .then(() => {
+          let updatedBody = this.state.body;
+
+          uploaded.forEach((u)=>{
+
+            var replace = "<image name=\""+u.name+"\">";
+            var re = new RegExp(replace,"g");
+            updatedBody = updatedBody.replace(re, "<img className=\"img-fluid\" src=\""+u.image_url+"\" alt=\"\"></img>");
+
+          });
+
+          this.setState({body:updatedBody});
+        })
+        .then(()=>{
+          resolve();
+        });
+      });
+
+    }
+
+    createPostObject = () => {
+
+      return new Promise((resolve, reject) => {
+        let body = this.processBody(this.state.body);
+
+        let postObject = {
+          title: this.state.title,
+          subTitle: this.state.subTitle,
+          author: this.state.author,
+          body: body,
+          banner_image_url: ""
+        };
+
+        if(this.state.mainImageFile !== ""){
+          const formData = new FormData();
+
+          formData.append('image', this.state.mainImageFile, this.state.mainImageFile.name);
+
+          axios.post('/image', formData).then(response => {
+            console.log(response);
+            postObject.banner_image_url = response.data.image_url;
+            resolve(postObject);
+          });
+        }
+        else resolve(postObject);
+      });
+
+    }
 
 
 
   updatePostClicked = () => {
 
-    if(this.state.title === null){
-      this.hideUploadModal();
-      return alert("Please enter Post Title");
-    }
-    if(this.state.subTitle === null){
-      this.hideUploadModal();
-      return alert("Please enter Post Subtitle");
-    }
-
-
-    if(this.state.selectedFile === null && this.state.banner_image_url === null) {
-      var r = window.confirm("Save post without banner image?");
-      if (r !== true) return;
-    }
-
-    const formData = new FormData();
-
-    if(this.state.selectedFile !== null && this.state.selectedFile !== undefined){
-      formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
-      axios.post('/image/masthead', formData).then(response => {
-        let banner_image_id = response.data.image_id;
-        let banner_image_url = response.data.image_url;
-
-        var postObject = {
-          title: this.state.title,
-          subTitle: this.state.subTitle,
-          author: this.state.author,
-          body: this.processBody(this.state.body),
-          banner_image_url: banner_image_url
-        };
+    this.setState({loading: true})
+    this.sendInlines()
+    .then(() => {
+      return this.createPostObject();
+    })
+    .then(postObject => {
 
         var id = this.state.id;
 
@@ -139,7 +190,7 @@ class Edit extends Component {
             throw Error(obj.res.statusText);
           }
           else{
-              this.hideUploadModal();
+            this.setState({loading: false})
             this.props.history.push('/post/'+obj.body.id);
           }
 
@@ -147,43 +198,8 @@ class Edit extends Component {
           console.log(error);
         });
   });
-      }
-      else {
-        var postObject = {
-          title: this.state.title,
-          subTitle: this.state.subTitle,
-          author: this.state.author,
-          body: this.processBody(this.state.body),
-          banner_image_url: this.state.banner_image_url
-        };
-
-        var id = this.state.id;
-
-        fetch('/posts/'+id+'/edit',{
-          method: "PUT",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-
-          },
-          body: JSON.stringify(postObject),
-        }).then(r =>  r.json().then(data => ({res: r, body: data})))
-        .then(obj => {
-          if(!obj.res.ok){
-            alert("Something went wrong!");
-            throw Error(obj.res.statusText);
-          }
-          else{
-            //  this.hideUploadModal();
-            this.props.history.push('/post/'+obj.body.id);
-          }
-
-        }).catch(function(error) {
-          console.log(error);
-        });
 
 
-      }
 
 
     }
@@ -212,7 +228,7 @@ class Edit extends Component {
             subTitle:obj.body.subTitle,
             author:obj.body.author,
             body: this.unprocessBody(obj.body.body),
-            banner_image_url:obj.body.banner_image_url,
+            mainImageFile:obj.body.banner_image_url,
 
           });
         }
@@ -225,16 +241,6 @@ class Edit extends Component {
       });
 
     }
-
-
-    hideCreateWaitModal = () => {
-       let modal = document.getElementById("updateWaitModal").click();
-    }
-
-    hideUploadModal = () => {
-       let modal = document.getElementById("uploadModal").click();
-    }
-
 
 
 
@@ -269,21 +275,20 @@ class Edit extends Component {
 
 
 
-
       addInlineImage = (event) => {
-        let imageFile = event.target.files[0];
-        const formData = new FormData();
-        formData.append('image', imageFile, imageFile.name);
-        axios.post('/image/inline', formData).then(response => {
-          let image_url = response.data.image_url;
 
-          let prefix = "<img className=\"img-fluid\" src="+image_url+" alt=\"\">"
-          let suffix = "</img>";
+        let images = this.state.inlineImages;
+
+        let file = event.target.files[0];
+
+        images.push(file);
+
+        this.setState({
+          inlineImages: images
+        }, () => {
           let body = this.state.body;
-          body = body + prefix + suffix;
+          body = body + "<image name=\""+file.name+"\">";
           this.setState({body:body})
-          this.hideUploadModal();
-
         });
 
       }
@@ -294,15 +299,16 @@ class Edit extends Component {
 
       renderActionBar = () => {
 
+
             let mainImageButtonType = "btn btn-success btn-file";
-            if(this.state.selectedFile === null && this.state.banner_image_url === null) mainImageButtonType = "btn btn-secondary btn-file";
+            if(this.state.mainImageFile === "") mainImageButtonType = "btn btn-secondary btn-file";
 
 
             return(
               <div>
                 <div className="row">
                   <div className="col-lg-12">
-                    <span class={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
+                    <span className={mainImageButtonType}>  Main Image <input type="file" onChange={this.mainImageFileChangedHandler}></input></span>
                     <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
                 <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Paragraph</button>
                 <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
@@ -318,65 +324,53 @@ class Edit extends Component {
       }
 
     render() {
+      if(this.state.loading) return(
+        <div> Loading . . .</div>
+      );
       return (
+
         <div>
 
-          <div className="modal fade" id="updateWaitModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLongTitle">Updating Post . . .</h5>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div className="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered" role="document">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h5 className="modal-title" id="exampleModalLongTitle">Uploading image . . .</h5>
-                </div>
-              </div>
-            </div>
-          </div>
 
           <div className="container">
             <div className="row">
               <div className="col-lg-8 col-md-10 mx-auto">
+
+
                 <form name="sentMessage" id="contactForm" noValidate>
 
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Title</label>
-                      <input type="text" className="form-control" placeholder="Title" id="title" required data-validation-required-message="Please enter post title." value={this.state.title} onChange={this.handleTitleChange}></input>
+                      <input type="text" className="form-control" placeholder="Title" id="title" value={this.state.title} onChange={this.handleTitleChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Author</label>
-                      <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" required data-validation-required-message="Please enter the author of this post." value={this.state.author} onChange={this.handleAuthorChange}></input>
+                      <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" value={this.state.author} onChange={this.handleAuthorChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group col-xs-12 floating-label-form-group controls">
-                      <label>Subtitle</label>
-                      <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
+                      <label>SubTitle</label>
+                      <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
                       <p className="help-block text-danger"></p>
                     </div>
                   </div>
                   <div className="control-group">
                     <div className="form-group floating-label-form-group controls">
                       <label>Body</label>
-                      <textarea rows="8" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
+                      <textarea rows="14" className="form-control" placeholder="Body" id="body" value={this.state.body} onChange={this.handleBodyChange}></textarea>
                       <p className="help-block text-danger"></p>
+
                     </div>
                   </div>
 
-
-                    {this.renderActionBar()}
+                  {this.renderActionBar()}
 
                 </form>
               </div>
@@ -384,9 +378,6 @@ class Edit extends Component {
           </div>
 
           <hr></hr>
-
-
-
 
         </div>
 

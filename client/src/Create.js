@@ -15,8 +15,10 @@ class Create extends Component {
       title: "",
       subTitle: "",
       author: "",
-      selectedFile: "",
+      mainImageFile: "",
       body: "",
+      inlineImages: [],
+      loading: false,
 
     }
   }
@@ -34,9 +36,10 @@ class Create extends Component {
     this.setState({body: e.target.value});
   }
 
-  fileChangedHandler = (event) => {
-    this.setState({selectedFile: event.target.files[0]})
+  mainImageFileChangedHandler = (event) => {
+    this.setState({mainImageFile: event.target.files[0]})
   }
+
 
   cancelClicked = () => {
     this.props.history.push('/home/');
@@ -59,82 +62,103 @@ class Create extends Component {
     processed = processed.replace(/<linebreak>/g, "<br>");
     processed = processed.replace(/<\/linebreak>/g, "</br>");
 
-
     return processed;
+  }
+
+
+
+
+
+  sendInlines = () => {
+    return new Promise((resolve, reject) => {
+
+      let uploaded = [];
+      let removed = [];
+
+      const uploaders = this.state.inlineImages.map(image => {
+        if(!this.state.body.includes(image.name)){
+          removed.push(image);
+          return;
+        }
+        const formData = new FormData();
+        formData.append('image', image, image.name);
+
+        return axios.post('/image', formData, {
+        }).then(response => {
+          uploaded.push({image_url:response.data.image_url,name: image.name});
+        })
+
+      });
+
+      axios.all(uploaders)
+      .then(() => {
+        this.setState({
+          inlineImages: this.state.inlineImages.filter((e) => { return !removed.includes(e); })
+        });
+      })
+      .then(() => {
+        let updatedBody = this.state.body;
+
+        uploaded.forEach((u)=>{
+
+          var replace = "<image name=\""+u.name+"\">";
+          var re = new RegExp(replace,"g");
+          updatedBody = updatedBody.replace(re, "<img className=\"img-fluid\" src=\""+u.image_url+"\" alt=\"\"></img>");
+
+        });
+
+        this.setState({body:updatedBody});
+      })
+      .then(()=>{
+        resolve();
+      });
+    });
+
+  }
+
+  createPostObject = () => {
+
+    return new Promise((resolve, reject) => {
+      let body = this.processBody(this.state.body);
+
+      let postObject = {
+        title: this.state.title,
+        subTitle: this.state.subTitle,
+        author: this.state.author,
+        body: body,
+        banner_image_url: ""
+      };
+
+      if(this.state.mainImageFile !== ""){
+        const formData = new FormData();
+
+        formData.append('image', this.state.mainImageFile, this.state.mainImageFile.name);
+        
+        axios.post('/image', formData).then(response => {
+          postObject.banner_image_url = response.data.image_url;
+          resolve(postObject);
+        });
+      }
+      else resolve(postObject);
+    });
+
   }
 
 
 
   createPostClicked = () => {
 
-    if(this.state.title === ""){
-      this.hideCreateWaitModal();
-      return alert("Please enter Post Title");
-    }
-    if(this.state.subTitle === ""){
-      this.hideCreateWaitModal();
-      return alert("Please enter Post Subtitle");
-    }
 
 
 
-    if(this.state.selectedFile === "") {
-      var r = window.confirm("Save post without banner image?");
-      if (r !== true) return;
-    }
-
-    const formData = new FormData();
-
-    if(this.state.selectedFile !== ""){
-      formData.append('image', this.state.selectedFile, this.state.selectedFile.name);
-      axios.post('/image/masthead', formData).then(response => {
-        let banner_image_id = response.data.image_id;
-        let banner_image_url = response.data.image_url;
-
-        var postObject = {
-          title: this.state.title,
-          subTitle: this.state.subTitle,
-          author: this.state.author,
-          body: this.processBody(this.state.body),
-          banner_image_url: banner_image_url
-        };
-
-        fetch('/posts/create',{
-          method: "POST",
-          headers: {
-            "Accept": "application/json",
-            "Content-Type": "application/json"
-
-          },
-          body: JSON.stringify(postObject),
-        }).then(r =>  r.json().then(data => ({res: r, body: data})))
-        .then(obj => {
-          if(!obj.res.ok){
-            alert("Something went wrong!");
-            throw Error(obj.res.statusText);
-          }
-          else{
-            this.hideCreateWaitModal();
-            this.props.history.push('/post/'+obj.body.id);
-
-          }
-
-        }).catch(function(error) {
-          console.log(error);
-        });
+    this.setState({loading: true})
+    this.sendInlines()
+    .then(() => {
+      return this.createPostObject();
+    })
+    .then(postObject => {
 
 
-      });
-    }
-    else{
-
-      var postObject = {
-        title: this.state.title,
-        subTitle: this.state.subTitle,
-        author: this.state.author,
-        body: this.processBody(this.state.body),
-        banner_image_url: ""
-      };
 
       fetch('/posts/create',{
         method: "POST",
@@ -151,29 +175,19 @@ class Create extends Component {
           throw Error(obj.res.statusText);
         }
         else{
-          //this.hideCreateWaitModal();
+          this.setState({loading: false})
           this.props.history.push('/post/'+obj.body.id);
 
         }
+
 
       }).catch(function(error) {
         console.log(error);
       });
 
-    }
 
-
+    })
   }
-
-  hideCreateWaitModal = () => {
-     let modal = document.getElementById("createWaitModal").click();
-  }
-
-  hideUploadModal = () => {
-     let modal = document.getElementById("uploadModal").click();
-  }
-
-
 
 
   addType = (newType) => {
@@ -208,21 +222,20 @@ class Create extends Component {
 
 
 
-
   addInlineImage = (event) => {
-    let imageFile = event.target.files[0];
-    const formData = new FormData();
-    formData.append('image', imageFile, imageFile.name);
-    axios.post('/image/inline', formData).then(response => {
-      let image_url = response.data.image_url;
 
-      let prefix = "<img className=\"img-fluid\" src="+image_url+" alt=\"\">"
-      let suffix = "</img>";
+    let images = this.state.inlineImages;
+
+    let file = event.target.files[0];
+
+    images.push(file);
+
+    this.setState({
+      inlineImages: images
+    }, () => {
       let body = this.state.body;
-      body = body + prefix + suffix;
+      body = body + "<image name=\""+file.name+"\">";
       this.setState({body:body})
-      this.hideUploadModal();
-
     });
 
   }
@@ -234,103 +247,38 @@ class Create extends Component {
   renderActionBar = () => {
 
     let mainImageButtonType = "btn btn-success btn-file";
-    if(this.state.selectedFile === "") mainImageButtonType = "btn btn-secondary btn-file";
+    if(this.state.mainImageFile === "") mainImageButtonType = "btn btn-secondary btn-file";
 
 
     return(
       <div>
         <div className="row">
           <div className="col-lg-12">
-            <span className={mainImageButtonType}>  Main Image <input type="file" onChange={this.fileChangedHandler}></input></span>
+            <span className={mainImageButtonType}>  Main Image <input type="file" onChange={this.mainImageFileChangedHandler}></input></span>
             <button type="button" className="btn btn-primary" onClick={() => this.addType("sectionHeading")}>Section Heading</button>
             <button type="button" className="btn btn-primary" onClick={() => this.addType("p")}>Paragraph</button>
             <button type="button" className="btn btn-dark" onClick={() => this.addType("quote")}>Quote</button>
-            <span className="btn btn-success btn-file"  data-toggle="modal" data-target="#uploadModal">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
+            <span className="btn btn-success btn-file">  Inline Image <input type="file" onChange={this.addInlineImage}></input></span>
             <button type="button" className="btn btn-info" onClick={() => this.addType("imageCaption")}>Image Caption</button>
             <button type="button" className="btn btn-warning" onClick={() => this.addType("lineBreak")}>Line Break</button>
             <button type = "button" className="btn btn-danger" onClick={this.cancelClicked}>Cancel</button>
-            <button type = "button" className="btn btn-danger"  data-toggle="modal" data-target="#createWaitModal" onClick={this.createPostClicked}>Save Post</button>
+            <button type = "button" className="btn btn-danger" onClick={this.createPostClicked}>Save Post</button>
           </div>
         </div>
       </div>
     );
   }
 
-  // TODO : DRY - REFRACTOR OG CODE IE NAV
-
-  //TODO : CONSOLE ERRORS
-
-  //TODO : WHEN REPLACING IMG TAGS FOR USER, USER AN INDEX POINTER IE IMAGE = 0, store image 0 in state, if on push to server isnt used, delete
-
-  // TODO : create without banner - not hiding MODAL
-
-  // TODO : LOAD ONLY WHAT NEEDED - PREVIEWS AVAILABLE , MORE PREVIEWS, POST CURRENTLY LOOKING AT
-
-  //TODO : IMAGE SIZE GOOD FOR MOBILE AND WIDE - MASTHEAD
-
-  //TODO : HIDE MODAL ON UPLOAD CANCEL
-
-  //TODO: DELETE ALSO DELETES CLOUDINARY IMAGES (INLINE AND MAIN)
-
-  //TODO: EDIT PAGE : SHOW IMAGES
-
-  //TODO : CALLING A NULL API SOMEWHERE
-
-  // TODO: BANNER IMAGE RES BAD AND DONT SEE ALL ON MOBILE
-
-  // TODO: SOMETHING HAS PREVENTED TEXT-ALIGN CENTRE STYLE
-
-
-  // TODO : INSERT AT CURSOR POSITION
-
-
-  //TODO HASHROUTER BACK TO BROWSER ROUTER - BUT BR BREAKS STYLE PATHS - SOMETHING TO DO WITH THIS.pROPS.PUSH
-
-  // TODO : IF CHANGE MIND ABOUT IMAGE, IMAGE HAS ALREADY BEEN UPLOADED (INLINE OR MASTHEAD)\
-
-  // TODO: CONTACT ME SCRIPT
-
-  //TODO : CHANGE BETWEEN HTML AND NICE FOR WHAT USER SEES
-
-  // TODO: FEEDBACCK ON WAITING FOR INLINE UPLOAD AND POST CREATE
-
-
-  // TODO: COMPLETE OPERATIONS AROUND IMAGES - CAN EDIT EDIT IMAGE. DELETE WILL REMOVE FROM CLOUD ETC
-
-  // TODO : CLICK POSt PREVIEW; GRAB THE DATA BASED ON THAT ID;
-
-  // TODO: ERROR ON BAD POST CREATION
-
-  // TODO: Lock down client and server
-
-  // TODO: VALIDATE EVERYWHERE
-
-  // TODO: OK OR ERROR - CHECK EVERYWHERE - SERVER TOO - DIFFERENT ACTIONS DIFFERENT STATUSES - IF RESPONSE IS BAD, STAY HERE
-
 
   render() {
+
+    if(this.state.loading) return(
+      <div> Loading . . .</div>
+    );
     return (
 
       <div>
-        <div className="modal fade" id="createWaitModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">Creating Post . . .</h5>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <div className="modal fade" id="uploadModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title" id="exampleModalLongTitle">Uploading image . . .</h5>
-              </div>
-            </div>
-          </div>
-        </div>
 
 
         <div className="container">
@@ -343,35 +291,34 @@ class Create extends Component {
                 <div className="control-group">
                   <div className="form-group floating-label-form-group controls">
                     <label>Title</label>
-                    <input type="text" className="form-control" placeholder="Title" id="title" required data-validation-required-message="Please enter post title." value={this.state.title} onChange={this.handleTitleChange}></input>
+                    <input type="text" className="form-control" placeholder="Title" id="title" value={this.state.title} onChange={this.handleTitleChange}></input>
                     <p className="help-block text-danger"></p>
                   </div>
                 </div>
                 <div className="control-group">
                   <div className="form-group floating-label-form-group controls">
                     <label>Author</label>
-                    <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" required data-validation-required-message="Please enter the author of this post." value={this.state.author} onChange={this.handleAuthorChange}></input>
+                    <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" value={this.state.author} onChange={this.handleAuthorChange}></input>
                     <p className="help-block text-danger"></p>
                   </div>
                 </div>
                 <div className="control-group">
                   <div className="form-group col-xs-12 floating-label-form-group controls">
                     <label>SubTitle</label>
-                    <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" required data-validation-required-message="Please enter a subtitle." value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
+                    <input type="tel" className="form-control" placeholder="Subtitle" id="subtitle" value={this.state.subTitle} onChange={this.handleSubTitleChange}></input>
                     <p className="help-block text-danger"></p>
                   </div>
                 </div>
                 <div className="control-group">
                   <div className="form-group floating-label-form-group controls">
                     <label>Body</label>
-                    <textarea rows="14" className="form-control" placeholder="Body" id="body" required data-validation-required-message="Please enter post body."  value={this.state.body} onChange={this.handleBodyChange}></textarea>
+                    <textarea rows="14" className="form-control" placeholder="Body" id="body" value={this.state.body} onChange={this.handleBodyChange}></textarea>
                     <p className="help-block text-danger"></p>
 
                   </div>
                 </div>
 
-                              {this.renderActionBar()}
-
+                {this.renderActionBar()}
 
               </form>
             </div>

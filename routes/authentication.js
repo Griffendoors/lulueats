@@ -24,7 +24,7 @@ router.post('/login', function(req, res, next) {
 
 
 
-     //TODO: Check for emailAddress and password combo from users db
+
      var storedEmailAddress = 'test';
      var storedPassword = '1234';
 
@@ -42,7 +42,7 @@ router.post('/login', function(req, res, next) {
 
 });
 
-//TODO: REFRESH TOKENS
+
 
 router.post('/checkToken', function(req, res, next) {
 
@@ -80,13 +80,7 @@ router.post('/checkToken', function(req, res, next) {
 
 });
 
-//TODO : TRY / CATCHES ON ALL OPERATIONS, AND RETURN SOMETHING USEFUL SO WHOLE APP DOESNT CRASH
-//TODO : CHANGE TO COOKIE FOR TOKEN
 
-
-
-// TODO: CREATE A USER DB TABLE
-// TODO: USE STATUS codes here
 
 
 
