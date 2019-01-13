@@ -1,15 +1,15 @@
-TODO
+TODO  - start bootstrap clean blog
 RELEASE
 - takes fucking ages to load initially
-- User db instead of hardcode
-- All css, js files
-- to lower case, trim
+
 - resize mast head on mobile - dont worry about vertical
 - console errors
 - load only what needed, previews availavble, more previews, post currently looking at.
 
 
 EXTRA
+- User db instead of hardcode
+- to lower case, trim
 - learn from albert- check his practices in portal
 - remove alerts - use plan for portal ie highlight red
 - someone trying to contact lulu, make sure they get feedback on form submit
@@ -25,6 +25,10 @@ EXTRA
 - click post preiew, grab data based on that id
 - error on bad post creation
 - lock down server
+- better loading screen
+- npm fix vulnerabilities
+- psuh to heroku runs client stuff twice
+- albert server.get -> spec actual folder ie static/image
 - client and server validation
 - ok or error, correct statuses, if response is bad, stay here.
 - reflect all edits/deletes in db/cloudinary.

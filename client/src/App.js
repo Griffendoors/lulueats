@@ -28,7 +28,7 @@ class App extends Component {
   render() {
 
     return (
-      <HashRouter>
+    //  <HashRouter>
         <Switch>
         <Route path="/" exact component = {Home}/>
         <Route path="/about" component={About}/>
@@ -40,7 +40,7 @@ class App extends Component {
         <Route path="/logout" component = {Logout}/>
         <Route component = {Home}/>
       </Switch>
-    </HashRouter>
+  //  </HashRouter>
 
     );
   }

@@ -25,8 +25,8 @@ router.post('/login', function(req, res, next) {
 
 
 
-     var storedEmailAddress = 'test';
-     var storedPassword = '1234';
+     var storedEmailAddress = 'luluc';
+     var storedPassword = 'lulu1234';
 
      if(email === storedEmailAddress && password === storedPassword){
        var token = generateToken(email);

@@ -24,22 +24,29 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 
-app.use('/posts', postsRouter);
-app.use('/image', imageRouter);
-app.use('/authentication', authenticationRouter);
-app.use('/contact', contactRouter);
+
 
 
 if(process.env.NODE_ENV === "production"){
 
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use('/static',express.static(path.join(__dirname, '/client/build/static')));
+  app.use('/css',express.static(path.join(__dirname, '/client/build/css')));
+  app.use('/img',express.static(path.join(__dirname, '/client/build/img')));
+  app.use('/js',express.static(path.join(__dirname, '/client/build/js')));
+  app.use('/vendor',express.static(path.join(__dirname, '/client/build/vendor')));
+  app.use('/scss',express.static(path.join(__dirname, '/client/build/scss')));
+
   // Handle React routing, return all requests to React app
   app.get('/*', function(req, res) {
-    res.sendFile(path.join(__dirname +'public/index.html'));
+    res.sendFile(path.join(__dirname +'/client/build/index.html'));
 
   });
 }
 
+app.use('/posts', postsRouter);
+app.use('/image', imageRouter);
+app.use('/authentication', authenticationRouter);
+app.use('/contact', contactRouter);
 
 
 // catch 404 and forward to error handler
