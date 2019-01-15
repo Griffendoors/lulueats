@@ -5,9 +5,18 @@ RELEASE
 - resize mast head on mobile - dont worry about vertical
 - console errors
 - load only what needed, previews availavble, more previews, post currently looking at.
+- client building twice etc, script fucked for heroku.
+
+- /api/ -> more clearly defines request seperation
+- async / await
+- suspense / lazy.
+- og logic ie posts/previews all make sense and work?
+- login password hidden
 
 
 EXTRA
+- create own cloudinary
+- change from token to session
 - User db instead of hardcode
 - to lower case, trim
 - learn from albert- check his practices in portal

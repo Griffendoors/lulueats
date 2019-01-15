@@ -9,6 +9,7 @@ const jwt  = require('jsonwebtoken');
 /* GET users listing. */
 router.post('/login', function(req, res, next) {
 
+
    var email = req.body.email;
    var password = req.body.password;
 
@@ -18,7 +19,7 @@ router.post('/login', function(req, res, next) {
     res.json({});
   }
   else{
-     //trim spaces
+
      email = email.trim();
      password = password.trim();
 
@@ -27,6 +28,8 @@ router.post('/login', function(req, res, next) {
 
      var storedEmailAddress = 'luluc';
      var storedPassword = 'lulu1234';
+
+
 
      if(email === storedEmailAddress && password === storedPassword){
        var token = generateToken(email);
@@ -90,7 +93,9 @@ function generateToken(email){
    email: email
   };
 
+  console.log("11")
   var privateKEY  = fs.readFileSync('./private.key', 'utf8');
+  console.log("22")
 
 
   var i  = 'GWA';          // Issuer
@@ -106,6 +111,7 @@ function generateToken(email){
   };
 
   var token = jwt.sign(payload, privateKEY, signOptions);
+  console.log(token);
   return token;
 
 }
@@ -115,8 +121,6 @@ router.post('/logout', function(req, res, next) {
     var publicKEY  = fs.readFileSync('./public.key', 'utf8');
 
    var token = req.body.token;
-
-   console.log("token" + token)
 
 
    if (!token) {
