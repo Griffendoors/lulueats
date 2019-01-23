@@ -1,11 +1,12 @@
 TODO  - start bootstrap clean blog
 RELEASE
+- Issue again wit hash router / refresh lose styles
 - takes fucking ages to load initially
 
 - resize mast head on mobile - dont worry about vertical
 - console errors
 - load only what needed, previews availavble, more previews, post currently looking at.
-- client building twice etc, script fucked for heroku.
+- client building twice etc, script fucked for heroku. the push takes way too long
 
 - /api/ -> more clearly defines request seperation
 - async / await
@@ -15,6 +16,7 @@ RELEASE
 
 
 EXTRA
+- npm audit fix
 - create own cloudinary
 - change from token to session
 - User db instead of hardcode
