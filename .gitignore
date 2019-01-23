@@ -3,11 +3,11 @@ node_modules
 
 #misc
 .DS_Store
-.env
+#.env
 #.env.default
 
 
 #Siging
-**/*.key
+#**/*.key
 
 /client/build
