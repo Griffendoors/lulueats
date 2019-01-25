@@ -5,8 +5,8 @@
   "scripts": {
     "startDev": "nodemon ./bin/www",
     "start": "node ./bin/www",
-    "heroku-postbuild": "knex migrate:latest && npm install",
-    "postinstall": "cd client && npm install --only=dev && npm install && npm run build"
+
+    "postinstall": "knex migrate:latest && cd client && npm install --only=dev && npm install && npm run build"
   },
   "dependencies": {
     "axios": "^0.18.0",

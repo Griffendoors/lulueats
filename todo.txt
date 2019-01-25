@@ -1,8 +1,5 @@
 TODO  - start bootstrap clean blog
 RELEASE
-- Issue again wit hash router / refresh lose styles
-- takes fucking ages to load initially
-
 - resize mast head on mobile - dont worry about vertical
 - console errors
 - load only what needed, previews availavble, more previews, post currently looking at.
@@ -12,10 +9,14 @@ RELEASE
 - async / await
 - suspense / lazy.
 - og logic ie posts/previews all make sense and work?
-- login password hidden
-
 
 EXTRA
+
+- correct in each repo
+- correct res and res read ie not empty json
+- what is being loaded at start -photo rotation mobile
+- favicon, manifest, add home screen
+- og video logic - ie insert and update, check and fill out this, posts all checked.
 - npm audit fix
 - create own cloudinary
 - change from token to session

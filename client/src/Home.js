@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { Route } from 'react-router-dom';
-import { LinkContainer } from 'react-router-bootstrap';
-import { Link } from 'react-router-bootstrap';
 
 import NavBar from './components/NavBar';
 import Footer from './components/Footer';

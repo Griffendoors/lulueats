@@ -15,8 +15,8 @@ class Contact extends Component {
   constructor(props){
     super(props)
     this.state = {
-      email: null,
-      password: null,
+      email: "",
+      password: "",
       redirect: false
 
     }
@@ -34,7 +34,7 @@ class Contact extends Component {
     let email =  this.state.email;
     let password = this.state.password;
 
-    if (!email || !password){
+    if (email === "" || password === ""){
       alert("Please enter email and password");
       return;
     }
@@ -91,15 +91,15 @@ class Contact extends Component {
               <form name="sentMessage" id="contactForm" noValidate>
                 <div className="control-group">
                   <div className="form-group floating-label-form-group controls">
-                    <label>Email Address</label>
-                    <input type="email" className="form-control" placeholder="Email Address" id="email" required data-validation-required-message="Please enter your email address." value={this.state.email} onChange={this.handleEmailChange}></input>
+                    <label>Username</label>
+                    <input type="email" className="form-control" placeholder="Username" id="email" required data-validation-required-message="Please enter your email address." value={this.state.email} onChange={this.handleEmailChange}></input>
                     <p className="help-block text-danger"></p>
                   </div>
                 </div>
                 <div className="control-group">
                   <div className="form-group col-xs-12 floating-label-form-group controls">
                     <label>Password</label>
-                    <input type="tel" className="form-control" placeholder="Password" id="password" required data-validation-required-message="Please enter your password." value={this.state.password} onChange={this.handlePasswordChange}></input>
+                    <input type="password" className="form-control" placeholder="Password" id="password" required data-validation-required-message="Please enter your password." value={this.state.password} onChange={this.handlePasswordChange}></input>
                     <p className="help-block text-danger"></p>
                   </div>
                 </div>
