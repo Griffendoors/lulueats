@@ -1,17 +1,16 @@
-TODO  - start bootstrap clean blog
-RELEASE
+EXTRA
+- edit image edit w inline image tag - 500 error on /image
++ it worked then it didnt, image didnt change, the string did though(unparsed) -> how did this effect the /image route?
++removed string, reuploaded image -> fine.
+
+- edit button save should be called update/save
+- insert inline photo caption - doesnt parse to lulu friendly (or back?)
 - resize mast head on mobile - dont worry about vertical
 - console errors
 - load only what needed, previews availavble, more previews, post currently looking at.
-- client building twice etc, script fucked for heroku. the push takes way too long
-
-- /api/ -> more clearly defines request seperation
 - async / await
 - suspense / lazy.
 - og logic ie posts/previews all make sense and work?
-
-EXTRA
-
 - correct in each repo
 - correct res and res read ie not empty json
 - what is being loaded at start -photo rotation mobile

@@ -126,3 +126,5 @@ class Contact extends Component {
 }
 
 export default Contact;
+
+//   "heroku-postbuild": "knex migrate:latest && npm install",
