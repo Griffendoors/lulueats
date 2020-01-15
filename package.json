@@ -9,7 +9,7 @@
     "postinstall": "knex migrate:latest && cd client && npm install --only=dev && npm install && npm run build"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "cloudinary": "^1.11.0",
     "concurrently": "^3.5.1",
     "cookie-parser": "~1.4.3",
