@@ -21,7 +21,6 @@ EXTRA
 - change from token to session
 - User db instead of hardcode
 - to lower case, trim
-- learn from albert- check his practices in portal
 - remove alerts - use plan for portal ie highlight red
 - someone trying to contact lulu, make sure they get feedback on form submit
 - register service worker and manifest.json

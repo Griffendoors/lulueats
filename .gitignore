@@ -6,6 +6,8 @@ node_modules
 .env
 #.env.default
 
+knexfile.js
+
 
 #Siging
 **/*.key
