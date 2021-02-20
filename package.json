@@ -5,7 +5,6 @@
   "scripts": {
     "startDev": "nodemon ./bin/www",
     "start": "node ./bin/www",
-
     "postinstall": "knex migrate:latest && cd client && npm install --only=dev && npm install && npm run build"
   },
   "dependencies": {

@@ -26,8 +26,8 @@ router.post('/login', function(req, res, next) {
 
 
 
-     var storedEmailAddress = 'luluc';
-     var storedPassword = 'lulu1234';
+     var storedEmailAddress = 'ryan';
+     var storedPassword = '123';
 
 
 

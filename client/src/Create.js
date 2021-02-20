@@ -298,7 +298,7 @@ class Create extends Component {
                 <div className="control-group">
                   <div className="form-group floating-label-form-group controls">
                     <label>Author</label>
-                    <input type="email" className="form-control" placeholder="Lulu Caitcheon" id="author" value={this.state.author} onChange={this.handleAuthorChange}></input>
+                    <input type="email" className="form-control" placeholder="Ryan Griffin" id="author" value={this.state.author} onChange={this.handleAuthorChange}></input>
                     <p className="help-block text-danger"></p>
                   </div>
                 </div>

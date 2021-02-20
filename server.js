@@ -33,6 +33,7 @@ app.use('/contact', contactRouter);
 
 if(process.env.NODE_ENV === "production"){
 
+
   app.use('/static',express.static(path.join(__dirname, '/client/build/static')));
   app.use('/css',express.static(path.join(__dirname, '/client/build/css')));
   app.use('/img',express.static(path.join(__dirname, '/client/build/img')));
